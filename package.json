@@ -20,7 +20,6 @@
     "@angular/platform-browser-dynamic": "~13.2.0",
     "@angular/router": "~13.2.0",
     "@ng-bootstrap/ng-bootstrap": "^11.0.0",
-    "@ngxs/store": "^3.7.3",
     "bootstrap": "^4.6.0",
     "rxjs": "~7.5.0",
     "tslib": "^2.3.0",
