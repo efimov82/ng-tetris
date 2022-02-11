@@ -55,11 +55,6 @@ export class Rectangle {
     return this.height;
   }
 
-  // TODO tmp remove after refactoring
-  public getRectangles(): Rectangle[] {
-    return [this];
-  }
-
   public setVelocity(velocity: Velocity): void {
     this.velocity = velocity;
   }
