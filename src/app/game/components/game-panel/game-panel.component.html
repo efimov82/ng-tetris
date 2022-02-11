@@ -1,0 +1,23 @@
+<p *ngIf="gameState$">Game state: {{ gameState$ | async }}</p>
+
+<button type="button" class="btn btn-primary" (click)="onStartClick()">
+  New game
+</button>
+
+<button
+  *ngIf="gameState$ && (gameState$ | async) === GameState.started"
+  type="button"
+  class="btn btn-primary"
+  (click)="onPauseClick()"
+>
+  Pause
+</button>
+
+<button
+  *ngIf="gameState$ && (gameState$ | async) === GameState.paused"
+  type="button"
+  class="btn btn-primary"
+  (click)="onResumeClick()"
+>
+  Resume
+</button>

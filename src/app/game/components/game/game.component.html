@@ -1,1 +1,13 @@
-<p>Start game!</p>
+<div class="container" (keyup)="handleKeyUp($event)">
+  <div class="row d-flex-center">
+    <game-panel
+      [gameState$]="game.getState()"
+      (newGame)="newGame()"
+      (pauseGame)="pauseGame()"
+      (resumeGame)="resumeGame()"
+    ></game-panel>
+  </div>
+  <div class="row d-flex-center">
+    <canvas #canvas class="gameField"></canvas>
+  </div>
+</div>
