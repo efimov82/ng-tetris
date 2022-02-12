@@ -6,7 +6,6 @@ export class Heap {
   private touchTop = false;
 
   constructor(
-    private ctx: CanvasRenderingContext2D,
     private rows: number,
     private cols: number,
     private cellSize: number = 30
@@ -32,8 +31,8 @@ export class Heap {
       return true;
     }
 
-    this.field.forEach((line, rowIndex) => {
-      line.forEach((cell, colIndex) => {
+    this.field.forEach((line) => {
+      line.forEach((cell) => {
         if (cell) {
           const [cellRow, cellCol] = this.getHeapCords(cell);
 
@@ -63,12 +62,41 @@ export class Heap {
     });
   }
 
+  public getField(row?: number): (Rectangle | null)[] | (Rectangle | null)[][] {
+    if (row) {
+      return this.field[row];
+    }
+    return this.field;
+  }
+
   public isAllowedMoveLeft(): boolean {
+    // TODO
     return true;
   }
 
   public isAllowedMoveRight(): boolean {
+    // TODO
     return true;
+  }
+
+  public removeCompletedLines(): number {
+    const linesForDelete: number[] = [];
+    for (let i = this.rows; i > 0; i--) {
+      let isLineCompleted = true;
+      for (let j = 1; j < this.cols; j++) {
+        if (this.field[i][j] === null) {
+          isLineCompleted = false;
+          break;
+        }
+      }
+
+      if (isLineCompleted) {
+        linesForDelete.push(i);
+      }
+    }
+
+    this.cleanupField(linesForDelete);
+    return linesForDelete.length;
   }
 
   public draw(): void {
@@ -79,6 +107,29 @@ export class Heap {
         }
       });
     });
+  }
+
+  protected cleanupField(linesForDelete: number[]) {
+    linesForDelete.forEach((i) => {
+      console.log('delete line:', i);
+      for (let j = 0; j < this.cols; j++) {
+        this.field[i][j] = null;
+      }
+
+      this.moveDownAllFrom(i - 1);
+    });
+  }
+
+  protected moveDownAllFrom(lineNum: number): void {
+    for (let i = lineNum; i > 0; i--) {
+      for (let j = 1; j < this.cols; j++) {
+        const newPos = this.field[i][j]?.getPosition();
+        if (newPos !== undefined) {
+          newPos.y += this.cellSize;
+          this.field[i][j]?.setPosition(newPos);
+        }
+      }
+    }
   }
 
   protected getHeapCords(rect: Rectangle): [number, number] {

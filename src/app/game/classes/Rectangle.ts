@@ -10,7 +10,7 @@ export interface Position {
 
 export class Rectangle {
   constructor(
-    private ctx: CanvasRenderingContext2D,
+    private ctx: CanvasRenderingContext2D | null,
     private position: Position,
     private width: number,
     private height: number,
@@ -24,6 +24,8 @@ export class Rectangle {
   }
 
   public draw() {
+    if (!this.ctx) return;
+
     this.ctx.beginPath();
     this.ctx.rect(this.position.x, this.position.y, this.width, this.height);
     this.ctx.fillStyle = this.color;

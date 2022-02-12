@@ -6,7 +6,7 @@ export abstract class Shape {
   protected isVertical = false;
 
   constructor(
-    protected ctx: CanvasRenderingContext2D,
+    protected ctx: CanvasRenderingContext2D | null,
     protected position: Position,
     protected color: string,
     protected velocity: Velocity,
@@ -40,6 +40,8 @@ export abstract class Shape {
   }
 
   public moveRight() {
+    if (!this.ctx) return;
+
     if (
       this.position.x + this.width + this.getWidth() <=
       this.ctx.canvas.width

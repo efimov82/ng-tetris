@@ -59,6 +59,8 @@ export class Game {
 
     if (this.detectCollisions(this.current)) {
       this.heap.add(this.current);
+      const removedLines = this.heap.removeCompletedLines();
+
       if (this.heap.isTouchTop()) {
         this.setState(GameState.finished);
         this.current.draw();
@@ -146,7 +148,7 @@ export class Game {
       const rows = this.canvas.height / this.cellSize;
       const cols = this.canvas.width / this.cellSize;
 
-      this.heap = new Heap(this.ctx, rows, cols, this.cellSize);
+      this.heap = new Heap(rows, cols, this.cellSize);
       this.current = this.generateNext();
       this.next = this.generateNext();
     }
@@ -186,7 +188,7 @@ export class Game {
     if (!this.ctx) return undefined;
 
     const position = { x: 150, y: -60 };
-    const velocity = { x: 0, y: 2 };
+    const velocity = { x: 0, y: 1 };
 
     // shapeIndex = 1;
     switch (shapeIndex) {
