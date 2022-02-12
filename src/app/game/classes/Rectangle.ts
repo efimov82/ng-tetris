@@ -47,6 +47,10 @@ export class Rectangle {
     return this.position;
   }
 
+  public setPosition(pos: Position) {
+    this.position = pos;
+  }
+
   public getWidth(): number {
     return this.width;
   }

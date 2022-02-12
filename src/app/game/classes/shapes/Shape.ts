@@ -1,8 +1,9 @@
-import { Position, Rectangle, Velocity } from "../Rectangle";
+import { Position, Rectangle, Velocity } from '../Rectangle';
 
 export abstract class Shape {
   protected cells: Rectangle[] = [];
   protected downVelocity = 0;
+  protected isVertical = false;
 
   constructor(
     protected ctx: CanvasRenderingContext2D,
@@ -65,6 +66,10 @@ export abstract class Shape {
 
   public setVelocity(velocity: Velocity): void {
     this.velocity = velocity;
+  }
+
+  public rotate(): void {
+    this.isVertical = !this.isVertical;
   }
 
   protected createCell(x: number, y: number): Rectangle {

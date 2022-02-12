@@ -93,6 +93,12 @@ export class Game {
     }
   }
 
+  public rotateCurrent() {
+    if (this.current) {
+      this.current.rotate();
+    }
+  }
+
   public start() {
     this.init();
     this.setState(GameState.started);
@@ -112,6 +118,10 @@ export class Game {
       this.update();
     }
   };
+
+  public finish() {
+    cancelAnimationFrame(this.animationFrame);
+  }
 
   public pause() {
     this.setState(GameState.paused);
@@ -133,12 +143,10 @@ export class Game {
   protected init() {
     this.ctx = this.canvas.getContext('2d');
     if (this.ctx) {
-      this.heap = new Heap(
-        this.ctx,
-        this.canvas.width,
-        this.canvas.height,
-        this.cellSize
-      );
+      const rows = this.canvas.height / this.cellSize;
+      const cols = this.canvas.width / this.cellSize;
+
+      this.heap = new Heap(this.ctx, rows, cols, this.cellSize);
       this.current = this.generateNext();
       this.next = this.generateNext();
     }
@@ -152,7 +160,6 @@ export class Game {
     const rectangles = obj.getRectangles();
     rectangles.forEach((rectangle) => {
       if (this.heap && this.heap.detectCollisions(rectangle)) {
-        // console.log('detectCollisions', rectangle);
         res = true;
         return;
       }
@@ -179,8 +186,9 @@ export class Game {
     if (!this.ctx) return undefined;
 
     const position = { x: 150, y: -60 };
-    const velocity = { x: 0, y: 1 };
+    const velocity = { x: 0, y: 2 };
 
+    // shapeIndex = 1;
     switch (shapeIndex) {
       case 0:
         position.y = -30;

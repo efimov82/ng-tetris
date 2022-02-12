@@ -1,19 +1,55 @@
-import { Shape } from "./Shape";
+import { Shape } from './Shape';
 
 export class TShape extends Shape {
+  private orintation: number = 0;
+
   public getWidth(): number {
-    return this.width * 3;
+    if (this.orintation === 0 || this.orintation === 2) {
+      return this.width * 3;
+    } else {
+      return this.width * 2;
+    }
   }
 
   public getHeight(): number {
-    return this.height * 2;
+    if (this.orintation === 0 || this.orintation === 2) {
+      return this.height * 2;
+    } else {
+      return this.height * 3;
+    }
+  }
+
+  public override rotate() {
+    this.orintation === 3 ? (this.orintation = 0) : this.orintation++;
   }
 
   protected initCells(): void {
     this.cells = [];
-    this.cells.push(this.createCell(30, 0));
-    this.cells.push(this.createCell(0, 30));
-    this.cells.push(this.createCell(30, 30));
-    this.cells.push(this.createCell(60, 30));
+    switch (this.orintation) {
+      case 0:
+        this.cells.push(this.createCell(30, 0));
+        this.cells.push(this.createCell(0, 30));
+        this.cells.push(this.createCell(30, 30));
+        this.cells.push(this.createCell(60, 30));
+        break;
+      case 1:
+        this.cells.push(this.createCell(0, 0));
+        this.cells.push(this.createCell(30, -30));
+        this.cells.push(this.createCell(30, 0));
+        this.cells.push(this.createCell(30, 30));
+        break;
+      case 2:
+        this.cells.push(this.createCell(0, 0));
+        this.cells.push(this.createCell(30, 0));
+        this.cells.push(this.createCell(60, 0));
+        this.cells.push(this.createCell(30, 30));
+        break;
+      case 3:
+        this.cells.push(this.createCell(0, 0));
+        this.cells.push(this.createCell(0, 30));
+        this.cells.push(this.createCell(0, 60));
+        this.cells.push(this.createCell(30, 30));
+        break;
+    }
   }
 }

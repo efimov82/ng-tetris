@@ -1,4 +1,4 @@
-<div class="container" (keyup)="handleKeyUp($event)">
+<div #gameContainer class="container" (keyup)="handleKeyUp($event)">
   <div class="row d-flex-center">
     <game-panel
       [gameState$]="game.getState()"
