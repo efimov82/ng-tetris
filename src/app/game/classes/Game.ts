@@ -75,13 +75,17 @@ export class Game {
 
   public moveLeft() {
     if (this.current) {
-      this.current.moveLeft();
+      if (this.heap?.isAllowedMoveLeft(this.current)) {
+        this.current.moveLeft();
+      }
     }
   }
 
   public moveRight() {
     if (this.current) {
-      this.current.moveRight();
+      if (this.heap?.isAllowedMoveRight(this.current)) {
+        this.current.moveRight();
+      }
     }
   }
   public moveDownStart() {

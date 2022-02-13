@@ -1,6 +1,8 @@
+import { v4 as uuidv4 } from 'uuid';
 import { Position, Rectangle, Velocity } from '../Rectangle';
 
 export abstract class Shape {
+  protected id: string;
   protected cells: Rectangle[] = [];
   protected downVelocity = 0;
   protected isVertical = false;
@@ -13,6 +15,7 @@ export abstract class Shape {
     protected width: number,
     protected height: number
   ) {
+    this.id = uuidv4();
     this.initCells();
   }
 
@@ -66,6 +69,10 @@ export abstract class Shape {
     return this.cells;
   }
 
+  public getId(): string {
+    return this.id;
+  }
+
   public setVelocity(velocity: Velocity): void {
     this.velocity = velocity;
   }
@@ -74,8 +81,37 @@ export abstract class Shape {
     this.isVertical = !this.isVertical;
   }
 
+  public getFuturePositionLeft(): Position[] {
+    const res: Position[] = [];
+    this.cells.forEach((rect) => {
+      const newPos: Position = {
+        x: rect.getPosition().x,
+        y: rect.getPosition().y,
+      };
+      newPos.x -= this.width;
+      res.push(newPos);
+    });
+
+    return res;
+  }
+
+  public getFuturePositionRight(): Position[] {
+    const res: Position[] = [];
+    this.cells.forEach((rect) => {
+      const newPos: Position = {
+        x: rect.getPosition().x,
+        y: rect.getPosition().y,
+      };
+      newPos.x += this.width;
+      res.push(newPos);
+    });
+
+    return res;
+  }
+
   protected createCell(x: number, y: number): Rectangle {
     return new Rectangle(
+      this.id,
       this.ctx,
       { x: this.position.x + x, y: this.position.y + y },
       this.width,

@@ -10,6 +10,7 @@ export interface Position {
 
 export class Rectangle {
   constructor(
+    private shapeId: string,
     private ctx: CanvasRenderingContext2D | null,
     private position: Position,
     private width: number,
@@ -43,6 +44,10 @@ export class Rectangle {
       this.position.x === position.x &&
       this.position.y <= position.y + obj.getHeight()
     );
+  }
+
+  public getId(): string {
+    return this.shapeId;
   }
 
   public getPosition(): Position {

@@ -1,4 +1,4 @@
-import { Rectangle } from './Rectangle';
+import { Position, Rectangle } from './Rectangle';
 import { Shape } from './shapes/Shape';
 
 export class Heap {
@@ -24,7 +24,6 @@ export class Heap {
 
   public detectCollisions(rect: Rectangle): boolean {
     let result = false;
-
     const [row, col] = this.getHeapCords(rect);
 
     if (row === this.rows) {
@@ -35,7 +34,6 @@ export class Heap {
       line.forEach((cell) => {
         if (cell) {
           const [cellRow, cellCol] = this.getHeapCords(cell);
-
           if (row + 1 === cellRow && col === cellCol) {
             result = true;
             return;
@@ -69,21 +67,11 @@ export class Heap {
     return this.field;
   }
 
-  public isAllowedMoveLeft(): boolean {
-    // TODO
-    return true;
-  }
-
-  public isAllowedMoveRight(): boolean {
-    // TODO
-    return true;
-  }
-
   public removeCompletedLines(): number {
     const linesForDelete: number[] = [];
     for (let i = this.rows; i > 0; i--) {
       let isLineCompleted = true;
-      for (let j = 1; j < this.cols; j++) {
+      for (let j = 1; j <= this.cols; j++) {
         if (this.field[i][j] === null) {
           isLineCompleted = false;
           break;
@@ -109,10 +97,38 @@ export class Heap {
     });
   }
 
+  public isAllowedMoveLeft(obj: Shape): boolean {
+    const futureRects = obj.getFuturePositionLeft();
+    return this.isAllowedMove(obj.getId(), futureRects);
+  }
+
+  public isAllowedMoveRight(obj: Shape): boolean {
+    const futureRects = obj.getFuturePositionRight();
+    return this.isAllowedMove(obj.getId(), futureRects);
+  }
+
+  protected isAllowedMove(objectId: string, position: Position[]): boolean {
+    let res = true;
+
+    position.forEach((rect) => {
+      const [row, col] = this.getHeapCords(rect);
+
+      if (this.field[row] && this.field[row][col]) {
+        const cell = this.field[row][col];
+        if (cell !== null && cell.getId() !== objectId) {
+          res = false;
+          return;
+        }
+      }
+    });
+
+    return res;
+  }
+
   protected cleanupField(linesForDelete: number[]) {
     linesForDelete.forEach((i) => {
       console.log('delete line:', i);
-      for (let j = 0; j < this.cols; j++) {
+      for (let j = 1; j <= this.cols; j++) {
         this.field[i][j] = null;
       }
 
@@ -132,12 +148,24 @@ export class Heap {
     }
   }
 
-  protected getHeapCords(rect: Rectangle): [number, number] {
-    const x = rect.getPosition().x;
-    const y = Math.floor(rect.getPosition().y / this.cellSize) * this.cellSize;
+  /**
+   *
+   * @param rect Rectangle | Position
+   * @returns [row, col]
+   */
+  protected getHeapCords(rect: Rectangle | Position): [number, number] {
+    let x, y: number;
+
+    if (rect instanceof Rectangle) {
+      x = rect.getPosition().x;
+      y = Math.floor(rect.getPosition().y / this.cellSize) * this.cellSize;
+    } else {
+      x = rect.x;
+      y = Math.floor(rect.y / this.cellSize) * this.cellSize;
+    }
 
     const row = y / this.cellSize + 1;
-    const col = x / this.cellSize;
+    const col = x / this.cellSize + 1;
 
     return [row, col];
   }
