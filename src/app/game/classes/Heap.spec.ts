@@ -122,6 +122,46 @@ fdescribe('Heap', () => {
     });
   });
 
+  fit('should remove 2 complited lines', () => {
+    let pos = { x: 0, y: 240 };
+    const box1 = new Box(null, pos, 'red', velocity, cellSize, cellSize);
+
+    pos = { x: 60, y: 240 };
+    const box2 = new Box(null, pos, 'red', velocity, cellSize, cellSize);
+
+    pos = { x: 120, y: 240 };
+    const box3 = new Box(null, pos, 'red', velocity, cellSize, cellSize);
+
+    pos = { x: 180, y: 240 };
+    const box4 = new Box(null, pos, 'red', velocity, cellSize, cellSize);
+
+    pos = { x: 240, y: 240 };
+    const box5 = new Box(null, pos, 'red', velocity, cellSize, cellSize);
+
+    pos = { x: 300, y: 240 };
+    const box6 = new Box(null, pos, 'red', velocity, cellSize, cellSize);
+
+    expect(heap.add(box1)).toBeTruthy();
+    expect(heap.add(box2)).toBeTruthy();
+    expect(heap.add(box3)).toBeTruthy();
+    expect(heap.add(box4)).toBeTruthy();
+    expect(heap.add(box5)).toBeTruthy();
+    expect(heap.add(box6)).toBeTruthy();
+
+    expect(heap.removeCompletedLines()).toBe(2);
+    const field = heap.getField();
+
+    field.forEach((line) => {
+      if (line instanceof Array) {
+        line.forEach((cell) => {
+          expect(cell).toBeNull();
+        });
+      } else {
+        expect(true).toBeFalse();
+      }
+    });
+  });
+
   fit('should move down all cells after remove line', () => {
     let pos = { x: 0, y: 270 };
     const line1 = new Line(null, pos, 'red', velocity, cellSize, cellSize);
@@ -181,9 +221,6 @@ fdescribe('Heap', () => {
     expect(heap.removeCompletedLines()).toBe(1);
 
     const fieldLine9 = heap.getField(9);
-    const fieldLine10 = heap.getField();
-
-    //console.log(fieldLine10);
 
     fieldLine9.forEach((cell) => {
       expect(cell).toBeNull();

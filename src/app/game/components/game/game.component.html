@@ -6,6 +6,11 @@
       (pauseGame)="pauseGame()"
       (resumeGame)="resumeGame()"
     ></game-panel>
+    <game-statistic
+      [gameTime$]="game.getGameTime()"
+      [removedLines$]="game.getRemovedLines()"
+      [scores$]="game.getScores()"
+    ></game-statistic>
   </div>
   <div class="row d-flex-center">
     <canvas #canvas class="gameField"></canvas>

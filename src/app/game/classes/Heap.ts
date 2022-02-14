@@ -137,8 +137,8 @@ export class Heap {
 
     rects.forEach((rect) => {
       const [row, col] = this.getHeapCords(rect);
-      if (row > this.rows || col > this.cols) {
-        throw new Error('Error add object on row: ' + row + ' col: ' + col);
+      if (row < 1 || row > this.rows || col < 1 || col > this.cols) {
+        return;
       }
 
       if (this.field[row][col] !== null) {
@@ -156,23 +156,23 @@ export class Heap {
       for (let j = 1; j <= this.cols; j++) {
         this.field[i][j] = null;
       }
-
-      this.moveDownAllFrom(i - 1);
     });
+
+    this.moveDownAllFrom(linesForDelete[0] - 1, linesForDelete.length);
   }
 
-  protected moveDownAllFrom(lineNum: number): void {
+  protected moveDownAllFrom(lineNum: number, countLines: number): void {
     for (let i = lineNum; i > 0; i--) {
       for (let j = 1; j <= this.cols; j++) {
         if (this.field[i][j] !== null) {
           const rect = this.field[i][j];
           if (rect) {
             const pos = rect.getPosition();
-            pos.y += this.cellSize;
+            pos.y += this.cellSize * countLines;
             rect.setPosition(pos);
 
             this.field[i][j] = null;
-            this.field[i + 1][j] = rect;
+            this.field[i + countLines][j] = rect;
           }
         }
       }

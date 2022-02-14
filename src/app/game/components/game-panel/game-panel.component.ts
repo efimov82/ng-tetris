@@ -1,13 +1,13 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { Observable } from 'rxjs';
-import { Game, GameState } from '../../classes/Game';
+import { GameState } from '../../classes/Game';
 
 @Component({
   selector: 'game-panel',
   templateUrl: './game-panel.component.html',
   styleUrls: ['./game-panel.component.scss'],
 })
-export class GamePanelComponent implements OnInit {
+export class GamePanelComponent {
   @Input() gameState$!: Observable<GameState>;
 
   @Output() newGame = new EventEmitter();
@@ -15,8 +15,6 @@ export class GamePanelComponent implements OnInit {
   @Output() resumeGame = new EventEmitter();
 
   public GameState = GameState;
-
-  ngOnInit(): void {}
 
   public onStartClick() {
     this.newGame.emit();

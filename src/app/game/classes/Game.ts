@@ -1,4 +1,4 @@
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { Heap } from './Heap';
 import { Box, Line, LShape, S1Shape, S2Shape, Shape, TShape } from './shapes';
 
@@ -10,15 +10,34 @@ export enum GameState {
   finished = 'finished',
 }
 
+export interface GameStatistic {
+  time: number;
+  removedLines: number;
+  level: number;
+  scores: number;
+  next: Shape | undefined;
+}
+
 export class Game {
   private ctx: CanvasRenderingContext2D | null = null;
   private level: number = 1;
+  private gameTime = 0;
+  private removedLines = 0;
+  private scores = 0;
   private state: GameState = GameState.empty;
-  private state$ = new BehaviorSubject(GameState.empty);
+  private timer = 0;
   private current: Shape | undefined;
-  private next: Shape | undefined;
+  private next: Shape | undefined = undefined;
   private heap: Heap | undefined;
   private _freesed = false;
+
+  private level$ = new BehaviorSubject(this.level);
+  private gameTime$ = new BehaviorSubject(this.gameTime);
+  private removedLines$ = new BehaviorSubject(this.removedLines);
+  private scores$ = new BehaviorSubject<number>(this.scores);
+  private state$ = new BehaviorSubject(this.state);
+  private next$ = new BehaviorSubject<Shape | undefined>(this.next);
+
   private shapes: Map<number, string> = new Map([
     [0, 'Line'],
     [1, 'Box'],
@@ -59,11 +78,12 @@ export class Game {
 
     if (this.detectCollisions(this.current)) {
       this.heap.add(this.current);
-      const removedLines = this.heap.removeCompletedLines();
+      this.removedLines += this.heap.removeCompletedLines();
 
       if (this.heap.isTouchTop()) {
         this.setState(GameState.finished);
         this.current.draw();
+        clearInterval(this.timer);
         return;
       }
       this.current = this.next;
@@ -74,7 +94,7 @@ export class Game {
   }
 
   public moveLeft() {
-    if (this.current) {
+    if (this.current && !this._freesed) {
       if (this.heap?.isAllowedMoveLeft(this.current)) {
         this.current.moveLeft();
       }
@@ -82,7 +102,7 @@ export class Game {
   }
 
   public moveRight() {
-    if (this.current) {
+    if (this.current && !this._freesed) {
       if (this.heap?.isAllowedMoveRight(this.current)) {
         this.current.moveRight();
       }
@@ -108,7 +128,21 @@ export class Game {
   public start() {
     this.init();
     this.setState(GameState.started);
+    this.createTimer();
     this.animate();
+  }
+
+  private createTimer() {
+    this.timer = window.setInterval(() => {
+      this.gameTime++;
+
+      this.level$.next(this.level);
+      this.gameTime$.next(this.gameTime);
+      this.removedLines$.next(this.removedLines);
+      this.scores$.next(this.scores);
+      this.state$.next(this.state);
+      this.next$.next(this.next);
+    }, 1000);
   }
 
   public animate = () => {
@@ -131,14 +165,36 @@ export class Game {
 
   public pause() {
     this.setState(GameState.paused);
+    clearInterval(this.timer);
   }
 
   public resume() {
     this.setState(GameState.started);
+    this.createTimer();
   }
 
   public getState(): Observable<GameState> {
     return this.state$.asObservable();
+  }
+
+  public getLevel(): Observable<number> {
+    return this.level$.asObservable();
+  }
+
+  public getGameTime(): Observable<number> {
+    return this.gameTime$.asObservable();
+  }
+
+  public getRemovedLines(): Observable<number> {
+    return this.removedLines$.asObservable();
+  }
+
+  public getScores(): Observable<number> {
+    return this.scores$.asObservable();
+  }
+
+  public getNext(): Observable<Shape | undefined> {
+    return this.next$.asObservable();
   }
 
   private setState(state: GameState) {
@@ -194,7 +250,6 @@ export class Game {
     const position = { x: 150, y: -60 };
     const velocity = { x: 0, y: 1 };
 
-    // shapeIndex = 1;
     switch (shapeIndex) {
       case 0:
         position.y = -30;
