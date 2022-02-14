@@ -45,11 +45,15 @@ export class Heap {
     return result;
   }
 
-  public add(obj: Shape): void {
+  public add(obj: Shape): boolean {
+    let res = true;
     const rects = obj.getRectangles();
+    if (!this.isPossibleAdd(obj)) {
+      return false;
+    }
+
     rects.forEach((rect) => {
       const [row, col] = this.getHeapCords(rect);
-
       rect.setVelocity({ x: 0, y: 0 });
       if (rect.getPosition().y <= 0) {
         this.touchTop = true;
@@ -58,6 +62,8 @@ export class Heap {
 
       this.field[row][col] = rect;
     });
+
+    return res;
   }
 
   public getField(row?: number): (Rectangle | null)[] | (Rectangle | null)[][] {
@@ -125,6 +131,25 @@ export class Heap {
     return res;
   }
 
+  protected isPossibleAdd(obj: Shape): boolean {
+    let res = true;
+    const rects = obj.getRectangles();
+
+    rects.forEach((rect) => {
+      const [row, col] = this.getHeapCords(rect);
+      if (row > this.rows || col > this.cols) {
+        throw new Error('Error add object on row: ' + row + ' col: ' + col);
+      }
+
+      if (this.field[row][col] !== null) {
+        res = false;
+        return;
+      }
+    });
+
+    return res;
+  }
+
   protected cleanupField(linesForDelete: number[]) {
     linesForDelete.forEach((i) => {
       console.log('delete line:', i);
@@ -138,11 +163,17 @@ export class Heap {
 
   protected moveDownAllFrom(lineNum: number): void {
     for (let i = lineNum; i > 0; i--) {
-      for (let j = 1; j < this.cols; j++) {
-        const newPos = this.field[i][j]?.getPosition();
-        if (newPos !== undefined) {
-          newPos.y += this.cellSize;
-          this.field[i][j]?.setPosition(newPos);
+      for (let j = 1; j <= this.cols; j++) {
+        if (this.field[i][j] !== null) {
+          const rect = this.field[i][j];
+          if (rect) {
+            const pos = rect.getPosition();
+            pos.y += this.cellSize;
+            rect.setPosition(pos);
+
+            this.field[i][j] = null;
+            this.field[i + 1][j] = rect;
+          }
         }
       }
     }

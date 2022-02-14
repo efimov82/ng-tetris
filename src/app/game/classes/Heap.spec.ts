@@ -1,4 +1,5 @@
 import { Heap } from './Heap';
+import { Rectangle } from './Rectangle';
 import { Box, Line } from './shapes';
 
 fdescribe('Heap', () => {
@@ -10,29 +11,34 @@ fdescribe('Heap', () => {
     heap = new Heap(10, 12);
   });
 
-  fit('should remove complited line', () => {
+  fit('should add shape to heap', () => {
     let pos = { x: 0, y: 270 };
-    const line1 = new Line(null, pos, 'red', velocity, cellSize, cellSize);
+    const line = new Line(null, pos, 'red', velocity, cellSize, cellSize);
 
-    pos = { x: 120, y: 270 };
+    expect(heap.add(line)).toBeTruthy();
+    const field10 = heap.getField(10);
+
+    field10.forEach((cell) => {
+      if (cell && cell instanceof Rectangle) {
+        expect(cell.getId()).toEqual(line.getId());
+      }
+    });
+  });
+
+  fit('should not add shape to not null cell', () => {
+    let pos = { x: 0, y: 270 };
+    const line = new Line(null, pos, 'red', velocity, cellSize, cellSize);
+    expect(heap.add(line)).toBeTruthy();
+
+    pos = { x: 60, y: 270 };
     const line2 = new Line(null, pos, 'red', velocity, cellSize, cellSize);
+    expect(heap.add(line2)).toBeFalsy();
 
-    pos = { x: 240, y: 270 };
-    const line3 = new Line(null, pos, 'red', velocity, cellSize, cellSize);
+    const field10 = heap.getField(10);
 
-    heap.add(line1);
-    heap.add(line2);
-    heap.add(line3);
-    expect(heap.removeCompletedLines()).toBe(1);
-    const field = heap.getField();
-
-    field.forEach((line) => {
-      if (line instanceof Array) {
-        line.forEach((cell) => {
-          expect(cell).toBeNull();
-        });
-      } else {
-        expect(true).toBeFalse();
+    field10.forEach((cell) => {
+      if (cell && cell instanceof Rectangle) {
+        expect(cell.getId()).toEqual(line.getId());
       }
     });
   });
@@ -87,5 +93,125 @@ fdescribe('Heap', () => {
     heap.add(box2);
 
     expect(heap.isAllowedMoveRight(box2)).toBeFalse();
+  });
+
+  fit('should remove complited line', () => {
+    let pos = { x: 0, y: 270 };
+    const line1 = new Line(null, pos, 'red', velocity, cellSize, cellSize);
+
+    pos = { x: 120, y: 270 };
+    const line2 = new Line(null, pos, 'red', velocity, cellSize, cellSize);
+
+    pos = { x: 240, y: 270 };
+    const line3 = new Line(null, pos, 'red', velocity, cellSize, cellSize);
+
+    heap.add(line1);
+    heap.add(line2);
+    heap.add(line3);
+    expect(heap.removeCompletedLines()).toBe(1);
+    const field = heap.getField();
+
+    field.forEach((line) => {
+      if (line instanceof Array) {
+        line.forEach((cell) => {
+          expect(cell).toBeNull();
+        });
+      } else {
+        expect(true).toBeFalse();
+      }
+    });
+  });
+
+  fit('should move down all cells after remove line', () => {
+    let pos = { x: 0, y: 270 };
+    const line1 = new Line(null, pos, 'red', velocity, cellSize, cellSize);
+
+    pos = { x: 120, y: 270 };
+    const line2 = new Line(null, pos, 'red', velocity, cellSize, cellSize);
+
+    pos = { x: 240, y: 270 };
+    const line3 = new Line(null, pos, 'red', velocity, cellSize, cellSize);
+
+    // box
+    const originY = 210;
+    pos = { x: 240, y: originY };
+    const box1 = new Box(null, pos, 'green', velocity, cellSize, cellSize);
+
+    expect(heap.add(line1)).toBeTruthy();
+    expect(heap.add(line2)).toBeTruthy();
+    expect(heap.add(line3)).toBeTruthy();
+    expect(heap.add(box1)).toBeTruthy();
+
+    expect(heap.removeCompletedLines()).toBe(1);
+    const field = heap.getField();
+
+    field.forEach((line) => {
+      if (line instanceof Array) {
+        line.forEach((cell) => {
+          if (cell && cell.getId() === box1.getId()) {
+            expect(cell.getPosition().y).toBeGreaterThan(originY);
+          } else {
+            expect(cell).toBeNull();
+          }
+        });
+      } else {
+        expect(true).toBeFalse();
+      }
+    });
+  });
+
+  fit('should move down all cells after remove line #2', () => {
+    let pos = { x: 0, y: 270 };
+    const line1 = new Line(null, pos, 'red', velocity, cellSize, cellSize);
+
+    pos = { x: 120, y: 270 };
+    const line2 = new Line(null, pos, 'red', velocity, cellSize, cellSize);
+
+    pos = { x: 240, y: 240 };
+    const box1 = new Box(null, pos, 'green', velocity, cellSize, cellSize);
+
+    pos = { x: 300, y: 240 };
+    const box2 = new Box(null, pos, 'black', velocity, cellSize, cellSize);
+
+    expect(heap.add(line1)).toBeTruthy();
+    expect(heap.add(line2)).toBeTruthy();
+    expect(heap.add(box1)).toBeTruthy();
+    expect(heap.add(box2)).toBeTruthy();
+
+    expect(heap.removeCompletedLines()).toBe(1);
+
+    const fieldLine9 = heap.getField(9);
+    const fieldLine10 = heap.getField();
+
+    //console.log(fieldLine10);
+
+    fieldLine9.forEach((cell) => {
+      expect(cell).toBeNull();
+    });
+  });
+
+  fit('should correct add shape after removing line', () => {
+    let pos = { x: 0, y: 270 };
+    const line1 = new Line(null, pos, 'red', velocity, cellSize, cellSize);
+
+    pos = { x: 120, y: 270 };
+    const line2 = new Line(null, pos, 'red', velocity, cellSize, cellSize);
+
+    pos = { x: 240, y: 240 };
+    const box1 = new Box(null, pos, 'green', velocity, cellSize, cellSize);
+
+    pos = { x: 300, y: 240 };
+    const box2 = new Box(null, pos, 'red', velocity, cellSize, cellSize);
+
+    expect(heap.add(line1)).toBeTruthy();
+    expect(heap.add(line2)).toBeTruthy();
+    expect(heap.add(box1)).toBeTruthy();
+    expect(heap.add(box2)).toBeTruthy();
+
+    expect(heap.removeCompletedLines()).toBe(1);
+
+    pos = { x: 240, y: 240 };
+    const line3 = new Line(null, pos, 'black', velocity, cellSize, cellSize);
+    expect(heap.add(line3)).toBeTruthy();
   });
 });
