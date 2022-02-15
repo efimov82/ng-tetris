@@ -4,7 +4,7 @@ import { Position, Rectangle, Velocity } from '../Rectangle';
 export abstract class Shape {
   protected id: string;
   protected cells: Rectangle[] = [];
-  protected downVelocity = 0;
+  // protected downVelocity = 0;
   protected isVertical = false;
 
   protected abstract name: string;
@@ -25,13 +25,12 @@ export abstract class Shape {
     return this.name;
   }
 
-  public update() {
+  public update(moveDown = true) {
     this.draw();
 
-    // if (this.downVelocity) {
-    //   this.downVelocity += 2;
-    // }
-    this.position.y += this.velocity.y + this.downVelocity;
+    if (moveDown) {
+      this.position.y += this.width * this.velocity.y;
+    }
     this.initCells();
   }
 
@@ -60,12 +59,12 @@ export abstract class Shape {
     }
   }
 
-  public moveDownStart() {
-    this.downVelocity = 1;
-  }
-  public moveDownStop() {
-    this.downVelocity = 0;
-  }
+  // public moveDownStart() {
+  //   this.downVelocity = 1;
+  // }
+  // public moveDownStop() {
+  //   this.downVelocity = 0;
+  // }
 
   public getPosition(): Position {
     return this.position;

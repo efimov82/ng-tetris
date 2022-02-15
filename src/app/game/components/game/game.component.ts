@@ -1,4 +1,12 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { DOCUMENT } from '@angular/common';
+import {
+  Component,
+  ElementRef,
+  HostListener,
+  Inject,
+  OnInit,
+  ViewChild,
+} from '@angular/core';
 import { textChangeRangeIsUnchanged } from 'typescript';
 import { Game } from '../../classes/Game';
 
@@ -11,17 +19,14 @@ export class GameComponent implements OnInit {
   @ViewChild('canvas', { static: true })
   canvas!: ElementRef<HTMLCanvasElement>;
 
-  @ViewChild('gameContainer', { static: false })
-  gameContainer!: ElementRef<HTMLDivElement>;
-
   public game!: Game;
 
   private ctx: CanvasRenderingContext2D | null = null;
-  private fieldWidth = 360;
+  private fieldWidth = 300;
   private fieldHeight = 600;
   private cellSize = 30;
 
-  constructor() {}
+  constructor(@Inject(DOCUMENT) private readonly documentRef: Document) {}
 
   ngOnInit(): void {
     this.canvas.nativeElement.width = this.fieldWidth;
@@ -37,7 +42,7 @@ export class GameComponent implements OnInit {
     }
     this.game = new Game(this.canvas.nativeElement, this.cellSize);
     this.game.start();
-    // setTimeout(() => this.gameContainer.nativeElement.focus());
+    this.canvas.nativeElement.focus();
   }
 
   public pauseGame() {
@@ -46,12 +51,10 @@ export class GameComponent implements OnInit {
 
   public resumeGame() {
     this.game.resume();
-    // console.log(this.gameContainer.nativeElement);
-    setTimeout(() => this.gameContainer.nativeElement.focus(), 100);
   }
 
-  public handleKeyUp($event: KeyboardEvent) {
-    // console.log($event.code);
+  @HostListener('window:keydown', ['$event'])
+  public handleKeyDown($event: KeyboardEvent) {
     switch ($event.code) {
       case 'ArrowLeft':
         this.game.moveLeft();
@@ -62,8 +65,20 @@ export class GameComponent implements OnInit {
       case 'ArrowDown':
         this.game.moveDownStart();
         break;
-      case 'ControlRight':
+      case 'ArrowUp':
         this.game.rotateCurrent();
+    }
+  }
+
+  @HostListener('window:keyup', ['$event'])
+  public handleKeyUp($event: KeyboardEvent) {
+    switch ($event.code) {
+      case 'ArrowDown':
+        this.game.moveDownStop();
+        break;
+      case 'Space':
+        this.game.moveHardDown();
+        break;
     }
   }
 }

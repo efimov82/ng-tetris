@@ -58,6 +58,8 @@ export class Game {
     [8, 'cyan'],
   ]);
   private animationFrame = 0;
+  private lastUpdate: number = 0;
+  private downVelocity = 0;
 
   constructor(private canvas: HTMLCanvasElement, private cellSize: number) {
     if (!canvas) {
@@ -87,18 +89,29 @@ export class Game {
         clearInterval(this.timer);
         return;
       }
+
       this.current = this.next;
       this.next = this.generateNext();
       // TODO refactor this
       this.scores += this.level + Math.pow(10, removedLines);
       this.level = Math.floor(this.removedLines / 20);
     } else {
-      this.current.update();
+      this.current.update(this.needMoveDown());
     }
   }
 
+  protected needMoveDown(): boolean {
+    const updateInterval = 1000 / this.downVelocity;
+    if (Date.now() - this.lastUpdate > updateInterval) {
+      this.lastUpdate = Date.now();
+      return true;
+    }
+
+    return false;
+  }
+
   public moveLeft() {
-    if (this.current && !this._freesed) {
+    if (this.state === GameState.started && this.current && !this._freesed) {
       if (this.heap?.isAllowedMoveLeft(this.current)) {
         this.current.moveLeft();
       }
@@ -106,26 +119,32 @@ export class Game {
   }
 
   public moveRight() {
-    if (this.current && !this._freesed) {
+    if (this.state === GameState.started && this.current && !this._freesed) {
       if (this.heap?.isAllowedMoveRight(this.current)) {
         this.current.moveRight();
       }
     }
   }
   public moveDownStart() {
-    if (this.current) {
-      this.current.moveDownStart();
+    if (this.state === GameState.started && this.current) {
+      this.downVelocity = 2;
     }
   }
   public moveDownStop() {
-    if (this.current) {
-      this.current.moveDownStop();
+    if (this.state === GameState.started && this.current) {
+      this.downVelocity = 1;
     }
   }
 
   public rotateCurrent() {
-    if (this.current) {
+    if (this.state === GameState.started && this.current) {
       this.current.rotate();
+    }
+  }
+
+  public moveHardDown() {
+    if (this.state === GameState.started && this.current) {
+      // TODO
     }
   }
 
@@ -201,7 +220,7 @@ export class Game {
     return this.next$.asObservable();
   }
 
-  private setState(state: GameState) {
+  protected setState(state: GameState) {
     this.state = state;
     this.state$.next(state);
   }

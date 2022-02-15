@@ -16,26 +16,56 @@ export class Rectangle {
     private width: number,
     private height: number,
     private color: string,
-    private velocity: Velocity
+    private velocity: Velocity,
+    private radius = 4
   ) {}
 
   public update() {
+    this.position.y += this.width; // * this.velocity.y;
     this.draw();
-    this.position.y += this.velocity.y;
   }
 
   public draw() {
     if (!this.ctx) return;
 
+    const radius = {
+      tl: this.radius,
+      tr: this.radius,
+      br: this.radius,
+      bl: this.radius,
+    };
+
+    const x = this.position.x;
+    const y = this.position.y;
     this.ctx.beginPath();
-    this.ctx.rect(this.position.x, this.position.y, this.width, this.height);
+
+    this.ctx.moveTo(x + radius.tl, y);
+    this.ctx.lineTo(x + this.width - radius.tr, y);
+    this.ctx.quadraticCurveTo(x + this.width, y, x + this.width, y + radius.tr);
+    this.ctx.lineTo(x + this.width, y + this.height - radius.br);
+    this.ctx.quadraticCurveTo(
+      x + this.width,
+      y + this.height,
+      x + this.width - radius.br,
+      y + this.height
+    );
+    this.ctx.lineTo(x + radius.bl, y + this.height);
+    this.ctx.quadraticCurveTo(
+      x,
+      y + this.height,
+      x,
+      y + this.height - radius.bl
+    );
+    this.ctx.lineTo(x, y + radius.tl);
+    this.ctx.quadraticCurveTo(x, y, x + radius.tl, y);
+    this.ctx.closePath();
+
     this.ctx.fillStyle = this.color;
     this.ctx.fill();
 
-    this.ctx.strokeStyle = 'grey';
+    this.ctx.strokeStyle = 'black';
     this.ctx.lineWidth = 1;
     this.ctx.stroke();
-    this.ctx.closePath();
   }
 
   public detectCollisions(obj: Rectangle): boolean {
