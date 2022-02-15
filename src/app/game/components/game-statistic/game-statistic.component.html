@@ -1,5 +1,7 @@
 <div class="container">
-  <div class="row">Time: {{ gameTime$ | async }}</div>
-  <div class="row">Removed lines: {{ removedLines$ | async }}</div>
-  <div class="row">Scores: {{ scores$ | async }}</div>
+  <div class="row">Time: {{ gameTime$ | async | date: "mm:ss" }}</div>
+  <div class="row">Lines: {{ removedLines$ | async }}</div>
+  <div class="row">Level: {{ level$ | async }}</div>
+  <div class="row">Score: {{ scores$ | async }}</div>
+  <div class="row">Next: <next-shape [shape$]="next$"></next-shape></div>
 </div>

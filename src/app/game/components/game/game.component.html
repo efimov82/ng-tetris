@@ -1,15 +1,19 @@
-<div #gameContainer class="container" (keyup)="handleKeyUp($event)">
+<div #gameContainer (keyup)="handleKeyUp($event)">
   <div class="row d-flex-center">
     <game-panel
+      class="col-4"
       [gameState$]="game.getState()"
       (newGame)="newGame()"
       (pauseGame)="pauseGame()"
       (resumeGame)="resumeGame()"
     ></game-panel>
     <game-statistic
+      class="col-4"
       [gameTime$]="game.getGameTime()"
       [removedLines$]="game.getRemovedLines()"
       [scores$]="game.getScores()"
+      [level$]="game.getLevel()"
+      [next$]="game.getNext()"
     ></game-statistic>
   </div>
   <div class="row d-flex-center">

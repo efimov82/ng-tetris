@@ -8,8 +8,9 @@ import { Shape } from '../../classes/shapes';
   styleUrls: ['./game-statistic.component.scss'],
 })
 export class GameStatisticComponent {
-  @Input() gameTime$!: Observable<number>;
+  @Input() gameTime$: Observable<number> = new Observable();
   @Input() removedLines$!: Observable<number>;
   @Input() scores$!: Observable<number>;
-  @Input() next$!: Observable<Shape | undefined>;
+  @Input() level$!: Observable<number>;
+  @Input() next$!: Observable<string | undefined>;
 }

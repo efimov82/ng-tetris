@@ -1,6 +1,7 @@
 import { Shape } from './Shape';
 
 export class TShape extends Shape {
+  protected name = 'T';
   private orintation: number = 0;
 
   public getWidth(): number {

@@ -36,7 +36,7 @@ export class Game {
   private removedLines$ = new BehaviorSubject(this.removedLines);
   private scores$ = new BehaviorSubject<number>(this.scores);
   private state$ = new BehaviorSubject(this.state);
-  private next$ = new BehaviorSubject<Shape | undefined>(this.next);
+  private next$ = new BehaviorSubject<string | undefined>(this.next?.getName());
 
   private shapes: Map<number, string> = new Map([
     [0, 'Line'],
@@ -78,7 +78,8 @@ export class Game {
 
     if (this.detectCollisions(this.current)) {
       this.heap.add(this.current);
-      this.removedLines += this.heap.removeCompletedLines();
+      const removedLines = this.heap.removeCompletedLines();
+      this.removedLines += removedLines;
 
       if (this.heap.isTouchTop()) {
         this.setState(GameState.finished);
@@ -88,6 +89,9 @@ export class Game {
       }
       this.current = this.next;
       this.next = this.generateNext();
+      // TODO refactor this
+      this.scores += this.level + Math.pow(10, removedLines);
+      this.level = Math.floor(this.removedLines / 20);
     } else {
       this.current.update();
     }
@@ -134,14 +138,14 @@ export class Game {
 
   private createTimer() {
     this.timer = window.setInterval(() => {
-      this.gameTime++;
+      this.gameTime += 1000;
 
       this.level$.next(this.level);
       this.gameTime$.next(this.gameTime);
       this.removedLines$.next(this.removedLines);
       this.scores$.next(this.scores);
       this.state$.next(this.state);
-      this.next$.next(this.next);
+      this.next$.next(this.next?.getName());
     }, 1000);
   }
 
@@ -193,7 +197,7 @@ export class Game {
     return this.scores$.asObservable();
   }
 
-  public getNext(): Observable<Shape | undefined> {
+  public getNext(): Observable<string | undefined> {
     return this.next$.asObservable();
   }
 
@@ -213,6 +217,9 @@ export class Game {
       this.next = this.generateNext();
     }
     this.state = GameState.created;
+    this.scores = 0;
+    this.removedLines = 0;
+    this.gameTime = 0;
   }
 
   protected detectCollisions(obj: Shape): boolean {

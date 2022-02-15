@@ -7,6 +7,8 @@ export abstract class Shape {
   protected downVelocity = 0;
   protected isVertical = false;
 
+  protected abstract name: string;
+
   constructor(
     protected ctx: CanvasRenderingContext2D | null,
     protected position: Position,
@@ -17,6 +19,10 @@ export abstract class Shape {
   ) {
     this.id = uuidv4();
     this.initCells();
+  }
+
+  public getName(): string {
+    return this.name;
   }
 
   public update() {

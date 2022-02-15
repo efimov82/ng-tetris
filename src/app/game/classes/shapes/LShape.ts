@@ -1,6 +1,7 @@
 import { Shape } from './Shape';
 
 export class LShape extends Shape {
+  protected name = 'L';
   private orintation: number = 0;
 
   public getWidth(): number {

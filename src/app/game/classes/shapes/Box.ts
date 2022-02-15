@@ -1,6 +1,8 @@
 import { Shape } from './Shape';
 
 export class Box extends Shape {
+  protected name = 'Box';
+
   public getWidth(): number {
     return this.width * 2;
   }

@@ -109,6 +109,9 @@ fdescribe('Heap', () => {
     heap.add(line2);
     heap.add(line3);
     expect(heap.removeCompletedLines()).toBe(1);
+    // second try
+    expect(heap.removeCompletedLines()).toBe(0);
+
     const field = heap.getField();
 
     field.forEach((line) => {

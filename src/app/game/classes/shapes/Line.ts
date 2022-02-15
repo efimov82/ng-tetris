@@ -1,6 +1,8 @@
 import { Shape } from './Shape';
 
 export class Line extends Shape {
+  protected name = 'Line';
+
   public getWidth(): number {
     if (this.isVertical) {
       return this.width;

@@ -1,6 +1,16 @@
-<h1>Welcome to Tetris</h1>
+<ul ngbNav #nav="ngbNav" class="nav-tabs">
+  <li ngbNavItem>
+    <a ngbNavLink routerLink="/">Home</a>
+    <!-- <ng-template ngbNavContent>Welcome to Tetris game!</ng-template> -->
+  </li>
+  <li ngbNavItem>
+    <a ngbNavLink routerLink="/game">Game</a>
+  </li>
+</ul>
+<div [ngbNavOutlet]="nav"></div>
 
-<button type="button" routerLink="">Home</button>
-<button type="button" routerLink="/game">Game</button>
+<div class="container">
+  <router-outlet></router-outlet>
+</div>
 
-<router-outlet></router-outlet>
+<footer class="m-2">Dan Efimov @ 2022</footer>
