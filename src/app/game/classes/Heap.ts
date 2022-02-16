@@ -93,7 +93,7 @@ export class Heap {
     return linesForDelete.length;
   }
 
-  public draw(): void {
+  public draw(current: Shape | undefined): void {
     this.field.forEach((row) => {
       row.forEach((rect) => {
         if (rect) {
@@ -101,6 +101,13 @@ export class Heap {
         }
       });
     });
+
+    if (current) {
+      const futureRects = this.getFutureRects(current);
+      futureRects.forEach((rect) => {
+        rect.draw(false, rect.getColor());
+      });
+    }
   }
 
   public isAllowedMoveLeft(obj: Shape): boolean {
@@ -111,6 +118,36 @@ export class Heap {
   public isAllowedMoveRight(obj: Shape): boolean {
     const futureRects = obj.getFuturePositionRight();
     return this.isAllowedMove(obj.getId(), futureRects);
+  }
+
+  public getFutureRects(current: Shape): Rectangle[] {
+    let rects = current.getFutureRectangles();
+
+    // console.log('getFutureRects: origin', current.getPosition(), rects);
+    for (let y = 1; y < this.rows; y++) {
+      let shapeIsOut = true;
+      rects.forEach((rect) => {
+        let pos = rect.getPosition();
+        pos.y += this.cellSize;
+
+        // shapeIsOut = pos.y < 0;
+        // console.log('getFutureRects:', shapeIsVisible, pos.y);
+        rect.setPosition(pos);
+      });
+      // console.log(rects[0].getPosition());
+
+      if (!this.isPossibleAddRects(rects)) {
+        break;
+      }
+    }
+
+    rects.forEach((rect) => {
+      let pos = rect.getPosition();
+      pos.y -= this.cellSize;
+      rect.setPosition(pos);
+    });
+
+    return rects;
   }
 
   protected isAllowedMove(objectId: string, position: Position[]): boolean {
@@ -132,16 +169,23 @@ export class Heap {
   }
 
   protected isPossibleAdd(obj: Shape): boolean {
+    return this.isPossibleAddRects(obj.getRectangles());
+  }
+
+  protected isPossibleAddRects(rects: Rectangle[]): boolean {
     let res = true;
-    const rects = obj.getRectangles();
 
     rects.forEach((rect) => {
       const [row, col] = this.getHeapCords(rect);
-      if (row < 1 || row > this.rows || col < 1 || col > this.cols) {
-        return;
-      }
-
-      if (this.field[row][col] !== null) {
+      if (row < 0) return;
+      // console.log('isPossibleAddRects:', rect.getPosition().y, row, col);
+      if (
+        row < 1 ||
+        row > this.rows ||
+        col < 1 ||
+        col > this.cols ||
+        this.field[row][col] !== null
+      ) {
         res = false;
         return;
       }
@@ -195,8 +239,12 @@ export class Heap {
       y = Math.floor(rect.y / this.cellSize) * this.cellSize;
     }
 
-    const row = y / this.cellSize + 1;
+    let row = y / this.cellSize + 1;
     const col = x / this.cellSize + 1;
+
+    // if (row > this.rows) {
+    //   row = this.rows;
+    // }
 
     return [row, col];
   }

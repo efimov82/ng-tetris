@@ -10,14 +10,14 @@ export interface Position {
 
 export class Rectangle {
   constructor(
-    private shapeId: string,
-    private ctx: CanvasRenderingContext2D | null,
-    private position: Position,
-    private width: number,
-    private height: number,
-    private color: string,
-    private velocity: Velocity,
-    private radius = 4
+    protected shapeId: string,
+    protected ctx: CanvasRenderingContext2D | null,
+    protected position: Position,
+    protected width: number,
+    protected height: number,
+    protected color: string,
+    protected velocity: Velocity,
+    protected radius = 4
   ) {}
 
   public update() {
@@ -25,7 +25,7 @@ export class Rectangle {
     this.draw();
   }
 
-  public draw() {
+  public draw(full = true, borderColor = 'black') {
     if (!this.ctx) return;
 
     const radius = {
@@ -60,10 +60,12 @@ export class Rectangle {
     this.ctx.quadraticCurveTo(x, y, x + radius.tl, y);
     this.ctx.closePath();
 
-    this.ctx.fillStyle = this.color;
-    this.ctx.fill();
+    if (full) {
+      this.ctx.fillStyle = this.color;
+      this.ctx.fill();
+    }
 
-    this.ctx.strokeStyle = 'black';
+    this.ctx.strokeStyle = borderColor;
     this.ctx.lineWidth = 1;
     this.ctx.stroke();
   }
@@ -81,7 +83,7 @@ export class Rectangle {
   }
 
   public getPosition(): Position {
-    return this.position;
+    return { ...this.position };
   }
 
   public setPosition(pos: Position) {
@@ -98,5 +100,9 @@ export class Rectangle {
 
   public setVelocity(velocity: Velocity): void {
     this.velocity = velocity;
+  }
+
+  public getColor(): string {
+    return this.color;
   }
 }

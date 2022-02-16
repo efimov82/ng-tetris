@@ -25,12 +25,12 @@ export class S1Shape extends Shape {
     if (this.isVertical) {
       this.cells.push(this.createCell(0, 0));
       this.cells.push(this.createCell(0, 30));
-      this.cells.push(this.createCell(30, 60));
       this.cells.push(this.createCell(30, 30));
+      this.cells.push(this.createCell(30, 60));
     } else {
+      this.cells.push(this.createCell(30, 0));
       this.cells.push(this.createCell(0, 30));
       this.cells.push(this.createCell(30, 30));
-      this.cells.push(this.createCell(30, 0));
       this.cells.push(this.createCell(60, 0));
     }
   }

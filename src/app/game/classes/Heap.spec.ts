@@ -254,4 +254,24 @@ fdescribe('Heap', () => {
     const line3 = new Line(null, pos, 'black', velocity, cellSize, cellSize);
     expect(heap.add(line3)).toBeTruthy();
   });
+
+  fit('should return future rectangles on bottom', () => {
+    const pos = { x: 120, y: -60 };
+    const box = new Box(null, pos, 'red', velocity, cellSize, cellSize);
+
+    const rects = heap.getFutureRects(box);
+
+    expect(rects.length).toBe(4);
+    expect(rects[0].getPosition()).toEqual({ x: 120, y: 240 });
+    expect(rects[1].getPosition()).toEqual({ x: 120, y: 270 });
+    expect(rects[2].getPosition()).toEqual({ x: 150, y: 240 });
+    expect(rects[3].getPosition()).toEqual({ x: 150, y: 270 });
+
+    box.update(true);
+
+    expect(rects[0].getPosition()).toEqual({ x: 120, y: 240 });
+    expect(rects[1].getPosition()).toEqual({ x: 120, y: 270 });
+    expect(rects[2].getPosition()).toEqual({ x: 150, y: 240 });
+    expect(rects[3].getPosition()).toEqual({ x: 150, y: 270 });
+  });
 });

@@ -70,8 +70,37 @@ export abstract class Shape {
     return this.position;
   }
 
+  public setPosition(position: Position) {
+    this.position = position;
+  }
+
   public getRectangles(): Rectangle[] {
     return this.cells;
+  }
+
+  public getFutureRectangles(): Rectangle[] {
+    let res: Rectangle[] = [];
+    this.cells.forEach((rect) => {
+      res.push(
+        new Rectangle(
+          this.id,
+          this.ctx,
+          {
+            x: rect.getPosition().x,
+            y: rect.getPosition().y + this.getHeight(),
+          },
+          this.width,
+          this.height,
+          this.color,
+          {
+            x: 0,
+            y: 0,
+          }
+        )
+      );
+    });
+
+    return res;
   }
 
   public getId(): string {

@@ -59,7 +59,7 @@ export class Game {
   ]);
   private animationFrame = 0;
   private lastUpdate: number = 0;
-  private downVelocity = 0;
+  private downVelocity = 1;
 
   constructor(private canvas: HTMLCanvasElement, private cellSize: number) {
     if (!canvas) {
@@ -69,10 +69,10 @@ export class Game {
 
   public update() {
     if (!this.ctx || !this.current || !this.heap) return;
-    if (this._freesed) return;
+    // if (this._freesed) return;
 
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-    this.heap.draw();
+    this.heap.draw(this.current);
     if (this.state !== GameState.started) {
       this.current.draw();
       return;
@@ -143,8 +143,12 @@ export class Game {
   }
 
   public moveHardDown() {
-    if (this.state === GameState.started && this.current) {
-      // TODO
+    if (this.state === GameState.started && this.current && this.heap) {
+      const futureRects = this.heap.getFutureRects(this.current);
+      const firstRect = futureRects[0];
+      const pos = this.current.getPosition();
+      pos.y = firstRect.getPosition().y;
+      console.log(firstRect, pos);
     }
   }
 
@@ -152,6 +156,7 @@ export class Game {
     this.init();
     this.setState(GameState.started);
     this.createTimer();
+    this.lastUpdate = Date.now();
     this.animate();
   }
 
@@ -169,8 +174,6 @@ export class Game {
   }
 
   public animate = () => {
-    if (this._freesed) return;
-
     this.animationFrame = requestAnimationFrame(this.animate);
     if (this.state === GameState.finished) {
       cancelAnimationFrame(this.animationFrame);
@@ -273,12 +276,12 @@ export class Game {
   protected createShape(shapeIndex: number, color: string): Shape | undefined {
     if (!this.ctx) return undefined;
 
-    const position = { x: 150, y: -60 };
+    const position = { x: 120, y: -30 };
     const velocity = { x: 0, y: 1 };
 
     switch (shapeIndex) {
       case 0:
-        position.y = -30;
+        //position.y = 0;
         return new Line(
           this.ctx,
           position,
