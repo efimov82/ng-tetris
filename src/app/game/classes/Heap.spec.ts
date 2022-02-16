@@ -255,11 +255,11 @@ fdescribe('Heap', () => {
     expect(heap.add(line3)).toBeTruthy();
   });
 
-  fit('should return future rectangles on bottom', () => {
-    const pos = { x: 120, y: -60 };
+  it('should return shape avatar on bottom', () => {
+    const pos = { x: 120, y: 0 };
     const box = new Box(null, pos, 'red', velocity, cellSize, cellSize);
 
-    const rects = heap.getFutureRects(box);
+    const rects = heap.getAvatar(box);
 
     expect(rects.length).toBe(4);
     expect(rects[0].getPosition()).toEqual({ x: 120, y: 240 });
@@ -273,5 +273,24 @@ fdescribe('Heap', () => {
     expect(rects[1].getPosition()).toEqual({ x: 120, y: 270 });
     expect(rects[2].getPosition()).toEqual({ x: 150, y: 240 });
     expect(rects[3].getPosition()).toEqual({ x: 150, y: 270 });
+  });
+
+  fit('should return avatar on top of the bottom shape', () => {
+    let pos = { x: 30, y: 270 };
+    const box = new Line(null, pos, 'red', velocity, cellSize, cellSize);
+
+    expect(heap.add(box)).toBeTruthy();
+
+    pos.y = 120;
+    const line = new Line(null, pos, 'blue', velocity, cellSize, cellSize);
+    line.rotate();
+    line.update(false);
+
+    const rects = heap.getAvatar(line);
+
+    expect(rects[0].getPosition()).toEqual({ x: 30, y: 150 });
+    expect(rects[1].getPosition()).toEqual({ x: 30, y: 180 });
+    expect(rects[2].getPosition()).toEqual({ x: 30, y: 210 });
+    expect(rects[3].getPosition()).toEqual({ x: 30, y: 240 });
   });
 });

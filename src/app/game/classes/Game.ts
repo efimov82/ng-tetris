@@ -144,7 +144,7 @@ export class Game {
 
   public moveHardDown() {
     if (this.state === GameState.started && this.current && this.heap) {
-      const futureRects = this.heap.getFutureRects(this.current);
+      const futureRects = this.heap.getAvatar(this.current);
       const firstRect = futureRects[0];
       const pos = this.current.getPosition();
       pos.y = firstRect.getPosition().y;

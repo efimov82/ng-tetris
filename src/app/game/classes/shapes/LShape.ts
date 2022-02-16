@@ -34,10 +34,10 @@ export class LShape extends Shape {
         this.cells.push(this.createCell(30, 60));
         break;
       case 1:
+        this.cells.push(this.createCell(60, 0));
         this.cells.push(this.createCell(0, 30));
         this.cells.push(this.createCell(30, 30));
         this.cells.push(this.createCell(60, 30));
-        this.cells.push(this.createCell(60, 0));
         break;
       case 2:
         this.cells.push(this.createCell(0, 0));

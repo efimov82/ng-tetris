@@ -59,13 +59,6 @@ export abstract class Shape {
     }
   }
 
-  // public moveDownStart() {
-  //   this.downVelocity = 1;
-  // }
-  // public moveDownStop() {
-  //   this.downVelocity = 0;
-  // }
-
   public getPosition(): Position {
     return this.position;
   }
@@ -85,10 +78,7 @@ export abstract class Shape {
         new Rectangle(
           this.id,
           this.ctx,
-          {
-            x: rect.getPosition().x,
-            y: rect.getPosition().y + this.getHeight(),
-          },
+          rect.getPosition(),
           this.width,
           this.height,
           this.color,

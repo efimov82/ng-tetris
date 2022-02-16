@@ -103,7 +103,7 @@ export class Heap {
     });
 
     if (current) {
-      const futureRects = this.getFutureRects(current);
+      const futureRects = this.getAvatar(current);
       futureRects.forEach((rect) => {
         rect.draw(false, rect.getColor());
       });
@@ -120,21 +120,16 @@ export class Heap {
     return this.isAllowedMove(obj.getId(), futureRects);
   }
 
-  public getFutureRects(current: Shape): Rectangle[] {
+  public getAvatar(current: Shape): Rectangle[] {
     let rects = current.getFutureRectangles();
 
-    // console.log('getFutureRects: origin', current.getPosition(), rects);
-    for (let y = 1; y < this.rows; y++) {
-      let shapeIsOut = true;
+    for (let y = 1; y <= this.rows; y++) {
       rects.forEach((rect) => {
         let pos = rect.getPosition();
         pos.y += this.cellSize;
 
-        // shapeIsOut = pos.y < 0;
-        // console.log('getFutureRects:', shapeIsVisible, pos.y);
         rect.setPosition(pos);
       });
-      // console.log(rects[0].getPosition());
 
       if (!this.isPossibleAddRects(rects)) {
         break;
