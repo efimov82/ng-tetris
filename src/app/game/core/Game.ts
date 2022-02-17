@@ -1,6 +1,15 @@
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { Heap } from './Heap';
-import { Box, Line, LShape, S1Shape, S2Shape, Shape, TShape } from './shapes';
+import {
+  Box,
+  L2Shape,
+  Line,
+  LShape,
+  S1Shape,
+  S2Shape,
+  Shape,
+  TShape,
+} from './shapes';
 
 export enum GameState {
   empty = 'empty',
@@ -45,6 +54,7 @@ export class Game {
     [3, 'TShape'],
     [4, 'S1Shape'],
     [5, 'S2Shape'],
+    [6, 'L2Shape'],
   ]);
   private colors: Map<number, string> = new Map([
     [0, 'red'],
@@ -331,6 +341,15 @@ export class Game {
         );
       case 5:
         return new S2Shape(
+          this.ctx,
+          position,
+          color,
+          velocity,
+          this.cellSize,
+          this.cellSize
+        );
+      case 6:
+        return new L2Shape(
           this.ctx,
           position,
           color,
