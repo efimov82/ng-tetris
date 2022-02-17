@@ -11,7 +11,7 @@ fdescribe('Heap', () => {
     heap = new Heap(10, 12);
   });
 
-  fit('should add shape to heap', () => {
+  fit('should add shape', () => {
     let pos = { x: 0, y: 270 };
     const line = new Line(null, pos, 'red', velocity, cellSize, cellSize);
 
@@ -25,7 +25,7 @@ fdescribe('Heap', () => {
     });
   });
 
-  fit('should not add shape to not null cell', () => {
+  fit('should not add shape to not empty cell', () => {
     let pos = { x: 0, y: 270 };
     const line = new Line(null, pos, 'red', velocity, cellSize, cellSize);
     expect(heap.add(line)).toBeTruthy();
@@ -276,7 +276,7 @@ fdescribe('Heap', () => {
     });
   });
 
-  fit('should correct add shape after removing line', () => {
+  fit('should add shape after removing line', () => {
     let pos = { x: 0, y: 270 };
     const line1 = new Line(null, pos, 'red', velocity, cellSize, cellSize);
 

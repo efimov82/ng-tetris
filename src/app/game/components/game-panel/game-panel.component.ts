@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { Observable } from 'rxjs';
-import { GameState } from '../../classes/Game';
+import { GameState } from '../../core/Game';
 
 @Component({
   selector: 'game-panel',

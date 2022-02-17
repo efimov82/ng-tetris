@@ -7,7 +7,7 @@ import {
   OnInit,
   ViewChild,
 } from '@angular/core';
-import { Game } from '../../classes/Game';
+import { Game } from '../../core/Game';
 import { GameService } from '../../services/game.service';
 
 @Component({

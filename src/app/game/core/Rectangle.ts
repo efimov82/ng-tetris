@@ -105,4 +105,14 @@ export class Rectangle {
   public getColor(): string {
     return this.color;
   }
+
+  public shrink(): Promise<boolean> {
+    return new Promise((resolve, reject) => {
+      while (this.height > 0) {
+        this.height -= 0.005;
+        this.draw.bind(this);
+      }
+      resolve(true);
+    });
+  }
 }

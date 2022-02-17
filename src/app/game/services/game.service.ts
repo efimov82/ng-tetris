@@ -1,7 +1,7 @@
 import { ElementRef, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { Game } from '../classes/Game';
-import { Shape } from '../classes/shapes';
+import { Game } from '../core/Game';
+import { Shape } from '../core/shapes';
 
 @Injectable({
   providedIn: 'root',

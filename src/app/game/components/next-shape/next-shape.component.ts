@@ -7,8 +7,8 @@ import {
   SimpleChanges,
   ViewChild,
 } from '@angular/core';
-import { Position, Rectangle } from '../../classes/Rectangle';
-import { Shape } from '../../classes/shapes';
+import { Position, Rectangle } from '../../core/Rectangle';
+import { Shape } from '../../core/shapes';
 
 @Component({
   selector: 'next-shape',

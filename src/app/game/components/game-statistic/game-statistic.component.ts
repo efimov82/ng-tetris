@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { Game } from '../../classes/Game';
+import { Game } from '../../core/Game';
 
 @Component({
   selector: 'game-statistic',
