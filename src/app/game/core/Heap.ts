@@ -1,5 +1,5 @@
 import { Position, Rectangle } from './Rectangle';
-import { Shape } from './shapes/Shape';
+import { Shape } from './shapes/Shape.abstract';
 
 export class Heap {
   private field: (Rectangle | null)[][] = [];

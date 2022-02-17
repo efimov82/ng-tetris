@@ -2,7 +2,12 @@
 
 <div class="container mt-3 mb-3">
   <div class="row">
-    <button type="button" class="btn btn-primary mr-1" (click)="onStartClick()">
+    <button
+      *ngIf="gameState$ && (gameState$ | async) !== GameState.started"
+      type="button"
+      class="btn btn-primary mr-1"
+      (click)="onStartClick()"
+    >
       New game
     </button>
 
