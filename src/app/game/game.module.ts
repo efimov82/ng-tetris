@@ -5,6 +5,7 @@ import { GameRoutingModule } from './game-routing.module';
 import { GamePanelComponent } from './components/game-panel/game-panel.component';
 import { GameStatisticComponent } from './components/game-statistic/game-statistic.component';
 import { NextShapeComponent } from './components/next-shape/next-shape.component';
+import { GameService } from './services/game.service';
 
 @NgModule({
   declarations: [
@@ -14,5 +15,6 @@ import { NextShapeComponent } from './components/next-shape/next-shape.component
     NextShapeComponent,
   ],
   imports: [CommonModule, GameRoutingModule],
+  providers: [GameService],
 })
 export class GameModule {}

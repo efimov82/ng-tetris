@@ -165,6 +165,52 @@ fdescribe('Heap', () => {
     });
   });
 
+  fit('should remove mixed lines', () => {
+    // first complited line
+    let pos = { x: 0, y: 270 };
+    heap.add(new Line(null, pos, 'red', velocity, cellSize, cellSize));
+
+    pos = { x: 120, y: 270 };
+    heap.add(new Line(null, pos, 'red', velocity, cellSize, cellSize));
+
+    pos = { x: 240, y: 270 };
+    heap.add(new Line(null, pos, 'red', velocity, cellSize, cellSize));
+
+    // middle uncompleted line
+    const line1 = new Line(
+      null,
+      { x: 30, y: 240 },
+      'blue',
+      velocity,
+      cellSize,
+      cellSize
+    );
+    heap.add(line1);
+
+    // second complited line
+    pos = { x: 0, y: 210 };
+    heap.add(new Line(null, pos, 'red', velocity, cellSize, cellSize));
+
+    pos = { x: 120, y: 210 };
+    heap.add(new Line(null, pos, 'red', velocity, cellSize, cellSize));
+
+    pos = { x: 240, y: 210 };
+    heap.add(new Line(null, pos, 'red', velocity, cellSize, cellSize));
+
+    expect(heap.removeCompletedLines()).toBe(2);
+    const field = heap.getField(10);
+
+    let countCells = 0;
+    field.forEach((cell) => {
+      if (cell instanceof Rectangle) {
+        expect(cell?.getId()).toEqual(line1.getId());
+        expect(cell?.getPosition().y).toEqual(270);
+        countCells++;
+      }
+    });
+    expect(countCells).toEqual(4);
+  });
+
   fit('should move down all cells after remove line', () => {
     let pos = { x: 0, y: 270 };
     const line1 = new Line(null, pos, 'red', velocity, cellSize, cellSize);
@@ -255,7 +301,7 @@ fdescribe('Heap', () => {
     expect(heap.add(line3)).toBeTruthy();
   });
 
-  it('should return shape avatar on bottom', () => {
+  fit('should return shape avatar on bottom', () => {
     const pos = { x: 120, y: 0 };
     const box = new Box(null, pos, 'red', velocity, cellSize, cellSize);
 
@@ -281,7 +327,7 @@ fdescribe('Heap', () => {
 
     expect(heap.add(box)).toBeTruthy();
 
-    pos.y = 120;
+    pos.y = 150;
     const line = new Line(null, pos, 'blue', velocity, cellSize, cellSize);
     line.rotate();
     line.update(false);

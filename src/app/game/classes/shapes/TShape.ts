@@ -2,7 +2,6 @@ import { Shape } from './Shape';
 
 export class TShape extends Shape {
   protected name = 'T';
-  private orintation: number = 0;
 
   public getWidth(): number {
     if (this.orintation === 0 || this.orintation === 2) {
@@ -51,6 +50,8 @@ export class TShape extends Shape {
         this.cells.push(this.createCell(0, 60));
         this.cells.push(this.createCell(30, 30));
         break;
+      default:
+        throw new Error(`Wrong orintation: ${this.orintation}`);
     }
   }
 }

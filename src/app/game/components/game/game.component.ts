@@ -7,8 +7,8 @@ import {
   OnInit,
   ViewChild,
 } from '@angular/core';
-import { textChangeRangeIsUnchanged } from 'typescript';
 import { Game } from '../../classes/Game';
+import { GameService } from '../../services/game.service';
 
 @Component({
   selector: 'app-game',
@@ -21,19 +21,22 @@ export class GameComponent implements OnInit {
 
   public game!: Game;
 
-  private ctx: CanvasRenderingContext2D | null = null;
+  // private ctx: CanvasRenderingContext2D | null = null;
   private fieldWidth = 300;
   private fieldHeight = 600;
   private cellSize = 30;
 
-  constructor(@Inject(DOCUMENT) private readonly documentRef: Document) {}
+  constructor(
+    private gameService: GameService,
+    @Inject(DOCUMENT) private readonly documentRef: Document
+  ) {}
 
   ngOnInit(): void {
     this.canvas.nativeElement.width = this.fieldWidth;
     this.canvas.nativeElement.height = this.fieldHeight;
 
-    this.ctx = this.canvas.nativeElement.getContext('2d');
-    this.game = new Game(this.canvas.nativeElement, this.cellSize);
+    //this.ctx = this.canvas.nativeElement.getContext('2d');
+    this.game = this.gameService.create(this.canvas, this.cellSize);
   }
 
   public newGame() {

@@ -1,7 +1,15 @@
-<div class="container">
-  <div class="row">Time: {{ gameTime$ | async | date: "mm:ss" }}</div>
-  <div class="row">Lines: {{ removedLines$ | async }}</div>
-  <div class="row">Level: {{ level$ | async }}</div>
-  <div class="row">Score: {{ scores$ | async }}</div>
-  <div class="row">Next: <next-shape [shape$]="next$"></next-shape></div>
+<div class="container stats">
+  <div class="row line">
+    Time:
+    <span class="value">{{ game.getGameTime() | async | date: "mm:ss" }}</span>
+  </div>
+  <div class="row line">
+    Lines: <span class="value">{{ game.getRemovedLines() | async }}</span>
+  </div>
+  <div class="row line">
+    Level: <span class="value">{{ game.getLevel() | async }}</span>
+  </div>
+  <div class="row">
+    Score: <span class="value">{{ game.getScores() | async }}</span>
+  </div>
 </div>

@@ -36,7 +36,7 @@ export class Game {
   private removedLines$ = new BehaviorSubject(this.removedLines);
   private scores$ = new BehaviorSubject<number>(this.scores);
   private state$ = new BehaviorSubject(this.state);
-  private next$ = new BehaviorSubject<string | undefined>(this.next?.getName());
+  private next$ = new BehaviorSubject<Shape | undefined>(this.next);
 
   private shapes: Map<number, string> = new Map([
     [0, 'Line'],
@@ -148,7 +148,7 @@ export class Game {
       const firstRect = futureRects[0];
       const pos = this.current.getPosition();
       pos.y = firstRect.getPosition().y;
-      console.log(firstRect, pos);
+      // console.log(firstRect, pos);
     }
   }
 
@@ -169,7 +169,6 @@ export class Game {
       this.removedLines$.next(this.removedLines);
       this.scores$.next(this.scores);
       this.state$.next(this.state);
-      this.next$.next(this.next?.getName());
     }, 1000);
   }
 
@@ -219,7 +218,7 @@ export class Game {
     return this.scores$.asObservable();
   }
 
-  public getNext(): Observable<string | undefined> {
+  public getNext(): Observable<Shape | undefined> {
     return this.next$.asObservable();
   }
 
@@ -260,13 +259,17 @@ export class Game {
     return res;
   }
 
-  protected generateNext(): Shape | undefined {
+  protected generateNext(emitNext = true): Shape | undefined {
     if (this.ctx) {
       const colorIndex = this.getRandomInt(this.colors.size);
       const shapeIndex = this.getRandomInt(this.shapes.size);
       const color = this.colors.get(colorIndex) || 'red';
 
-      return this.createShape(shapeIndex, color);
+      const nextShape = this.createShape(shapeIndex, color);
+      if (emitNext) {
+        this.next$.next(nextShape);
+      }
+      return nextShape;
     } else {
       console.log("can't generateNext");
       return undefined;

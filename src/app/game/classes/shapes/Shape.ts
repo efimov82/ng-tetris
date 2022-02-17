@@ -4,8 +4,8 @@ import { Position, Rectangle, Velocity } from '../Rectangle';
 export abstract class Shape {
   protected id: string;
   protected cells: Rectangle[] = [];
-  // protected downVelocity = 0;
   protected isVertical = false;
+  protected orintation = 0;
 
   protected abstract name: string;
 

@@ -190,28 +190,27 @@ export class Heap {
   }
 
   protected cleanupField(linesForDelete: number[]) {
-    linesForDelete.forEach((i) => {
-      console.log('delete line:', i);
+    linesForDelete.reverse().forEach((i) => {
       for (let j = 1; j <= this.cols; j++) {
         this.field[i][j] = null;
       }
-    });
 
-    this.moveDownAllFrom(linesForDelete[0] - 1, linesForDelete.length);
+      this.moveDownAllFrom(i - 1);
+    });
   }
 
-  protected moveDownAllFrom(lineNum: number, countLines: number): void {
+  protected moveDownAllFrom(lineNum: number): void {
     for (let i = lineNum; i > 0; i--) {
       for (let j = 1; j <= this.cols; j++) {
         if (this.field[i][j] !== null) {
           const rect = this.field[i][j];
           if (rect) {
             const pos = rect.getPosition();
-            pos.y += this.cellSize * countLines;
+            pos.y += this.cellSize;
             rect.setPosition(pos);
 
             this.field[i][j] = null;
-            this.field[i + countLines][j] = rect;
+            this.field[i + 1][j] = rect;
           }
         }
       }

@@ -1,22 +1,24 @@
 <div #gameContainer (keyup)="handleKeyUp($event)">
   <div class="row d-flex-center">
-    <game-panel
-      class="col-4"
-      [gameState$]="game.getState()"
-      (newGame)="newGame()"
-      (pauseGame)="pauseGame()"
-      (resumeGame)="resumeGame()"
-    ></game-panel>
-    <game-statistic
-      class="col-4"
-      [gameTime$]="game.getGameTime()"
-      [removedLines$]="game.getRemovedLines()"
-      [scores$]="game.getScores()"
-      [level$]="game.getLevel()"
-      [next$]="game.getNext()"
-    ></game-statistic>
-  </div>
-  <div class="row d-flex-center">
-    <canvas #canvas class="gameField"></canvas>
+    <div class="col-5">
+      <canvas #canvas class="gameField"></canvas>
+    </div>
+    <div class="col-5">
+      <div class="row">
+        <game-panel
+          [gameState$]="game.getState()"
+          (newGame)="newGame()"
+          (pauseGame)="pauseGame()"
+          (resumeGame)="resumeGame()"
+        ></game-panel>
+      </div>
+
+      <div class="row">
+        <game-statistic [game]="game"></game-statistic>
+      </div>
+      <div class="row">
+        <next-shape [next]="game.getNext() | async"></next-shape>
+      </div>
+    </div>
   </div>
 </div>
