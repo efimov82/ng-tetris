@@ -1,9 +1,9 @@
 <div #gameContainer (keyup)="handleKeyUp($event)">
   <div class="row d-flex-center">
-    <div class="col-5">
+    <div>
       <canvas #canvas class="gameField"></canvas>
     </div>
-    <div class="col-5">
+    <div class="col-4 col-md-2">
       <div class="row">
         <game-panel
           [gameState$]="game.getState()"

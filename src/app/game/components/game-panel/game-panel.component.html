@@ -5,7 +5,7 @@
     <button
       *ngIf="gameState$ && (gameState$ | async) !== GameState.started"
       type="button"
-      class="btn btn-primary mr-1"
+      class="btn btn-primary mb-1"
       (click)="onStartClick()"
     >
       New game
