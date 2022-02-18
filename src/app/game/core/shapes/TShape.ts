@@ -1,4 +1,4 @@
-import { Shape } from './Shape.abstract';
+import { Shape } from '../common/Shape.abstract';
 
 export class TShape extends Shape {
   protected name = 'T';

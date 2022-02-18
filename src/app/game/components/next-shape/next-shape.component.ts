@@ -7,8 +7,9 @@ import {
   SimpleChanges,
   ViewChild,
 } from '@angular/core';
-import { Position, Rectangle } from '../../core/Rectangle';
-import { Shape } from '../../core/shapes';
+import { Rectangle } from '../../core/common/Rectangle';
+import { Shape } from '../../core/common/Shape.abstract';
+import { Position } from '../../core/common/types';
 
 @Component({
   selector: 'next-shape',
@@ -69,11 +70,11 @@ export class NextShapeComponent implements OnInit, OnChanges {
   }
 
   private getPosition(originPosition: Position): Position {
-    const position = { x: 120, y: -30 };
+    const diffPosition = { x: 120, y: -30 };
 
     return {
-      x: originPosition.x - position.x,
-      y: originPosition.y - position.y,
+      x: originPosition.x - diffPosition.x,
+      y: originPosition.y - diffPosition.y,
     };
   }
 }

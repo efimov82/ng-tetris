@@ -1,12 +1,4 @@
-export interface Velocity {
-  x: number;
-  y: number;
-}
-
-export interface Position {
-  x: number;
-  y: number;
-}
+import { Position, Velocity } from './types';
 
 export class Rectangle {
   constructor(
@@ -21,7 +13,7 @@ export class Rectangle {
   ) {}
 
   public update() {
-    this.position.y += this.width; // * this.velocity.y;
+    this.position.y += this.width;
     this.draw();
   }
 

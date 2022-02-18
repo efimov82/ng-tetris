@@ -1,5 +1,5 @@
 import { Heap } from './Heap';
-import { Rectangle } from './Rectangle';
+import { Rectangle } from './common/Rectangle';
 import { Box, Line } from './shapes';
 
 fdescribe('Heap', () => {

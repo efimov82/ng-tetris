@@ -1,5 +1,6 @@
-import { Position, Rectangle } from './Rectangle';
-import { Shape } from './shapes/Shape.abstract';
+import { Rectangle } from './common/Rectangle';
+import { Shape } from './common/Shape.abstract';
+import { Position } from './common/types';
 
 export class Heap {
   private field: (Rectangle | null)[][] = [];
@@ -173,7 +174,7 @@ export class Heap {
     rects.forEach((rect) => {
       const [row, col] = this.getHeapCords(rect);
       if (row < 0) return;
-      // console.log('isPossibleAddRects:', rect.getPosition().y, row, col);
+
       if (
         row < 1 ||
         row > this.rows ||
@@ -235,10 +236,6 @@ export class Heap {
 
     let row = y / this.cellSize + 1;
     const col = x / this.cellSize + 1;
-
-    // if (row > this.rows) {
-    //   row = this.rows;
-    // }
 
     return [row, col];
   }

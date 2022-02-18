@@ -1,15 +1,7 @@
-import { BehaviorSubject, Observable, Subject } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
+import { Shape } from './common/Shape.abstract';
+import { ShapeFactory } from './common/ShapeFactory';
 import { Heap } from './Heap';
-import {
-  Box,
-  L2Shape,
-  Line,
-  LShape,
-  S1Shape,
-  S2Shape,
-  Shape,
-  TShape,
-} from './shapes';
 
 export enum GameState {
   empty = 'empty',
@@ -18,7 +10,6 @@ export enum GameState {
   paused = 'paused',
   finished = 'finished',
 }
-
 export interface GameStatistic {
   time: number;
   removedLines: number;
@@ -47,26 +38,6 @@ export class Game {
   private state$ = new BehaviorSubject(this.state);
   private next$ = new BehaviorSubject<Shape | undefined>(this.next);
 
-  private shapes: Map<number, string> = new Map([
-    [0, 'Line'],
-    [1, 'Box'],
-    [2, 'LShape'],
-    [3, 'TShape'],
-    [4, 'S1Shape'],
-    [5, 'S2Shape'],
-    [6, 'L2Shape'],
-  ]);
-  private colors: Map<number, string> = new Map([
-    [0, 'red'],
-    [1, 'green'],
-    [2, 'blue'],
-    [3, 'purple'],
-    [4, 'yellow'],
-    [5, 'orange'],
-    [6, 'pink'],
-    [7, 'magenta'],
-    [8, 'cyan'],
-  ]);
   private animationFrame = 0;
   private lastUpdate: number = 0;
   private downVelocity = 1;
@@ -79,7 +50,6 @@ export class Game {
 
   public update() {
     if (!this.ctx || !this.current || !this.heap) return;
-    // if (this._freesed) return;
 
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
     this.heap.draw(this.current);
@@ -94,30 +64,18 @@ export class Game {
       this.removedLines += removedLines;
 
       if (this.heap.isTouchTop()) {
-        this.setState(GameState.finished);
-        this.current.draw();
-        clearInterval(this.timer);
+        this.gameOver();
         return;
       }
 
       this.current = this.next;
       this.next = this.generateNext();
-      // TODO refactor this
-      this.scores += this.level + Math.pow(10, removedLines);
-      this.level = Math.floor(this.removedLines / 20);
+
+      this.calculateScores(removedLines);
+      this.level = Math.floor(this.removedLines / 20) + 1;
     } else {
       this.current.update(this.needMoveDown());
     }
-  }
-
-  protected needMoveDown(): boolean {
-    const updateInterval = 1000 / this.downVelocity;
-    if (Date.now() - this.lastUpdate > updateInterval) {
-      this.lastUpdate = Date.now();
-      return true;
-    }
-
-    return false;
   }
 
   public moveLeft() {
@@ -168,18 +126,6 @@ export class Game {
     this.createTimer();
     this.lastUpdate = Date.now();
     this.animate();
-  }
-
-  private createTimer() {
-    this.timer = window.setInterval(() => {
-      this.gameTime += 1000;
-
-      this.level$.next(this.level);
-      this.gameTime$.next(this.gameTime);
-      this.removedLines$.next(this.removedLines);
-      this.scores$.next(this.scores);
-      this.state$.next(this.state);
-    }, 1000);
   }
 
   public animate = () => {
@@ -269,13 +215,77 @@ export class Game {
     return res;
   }
 
+  protected needMoveDown(): boolean {
+    const levelSpeed = this.getLevelSpeed();
+    const updateInterval = (1000 - levelSpeed) / this.downVelocity;
+    if (Date.now() - this.lastUpdate > updateInterval) {
+      this.lastUpdate = Date.now();
+      return true;
+    }
+
+    return false;
+  }
+
+  protected getLevelSpeed(): number {
+    switch (this.level) {
+      case 1:
+        return 0;
+      case 2:
+        return 300;
+      case 3:
+        return 500;
+      case 4:
+        return 600;
+      case 5:
+        return 700;
+      default:
+        return 800;
+    }
+  }
+
+  protected createTimer() {
+    this.timer = window.setInterval(() => {
+      this.gameTime += 1000;
+
+      this.level$.next(this.level);
+      this.gameTime$.next(this.gameTime);
+      this.removedLines$.next(this.removedLines);
+      this.scores$.next(this.scores);
+      this.state$.next(this.state);
+    }, 1000);
+  }
+
+  protected gameOver() {
+    this.setState(GameState.finished);
+    this.current?.draw();
+    clearInterval(this.timer);
+  }
+
+  protected calculateScores(removedLines: number): void {
+    let val = 0;
+    switch (removedLines) {
+      case 1:
+        val = 100;
+        break;
+      case 2:
+        val = 300;
+        break;
+      case 3:
+        val = 500;
+        break;
+      case 4:
+        val = 900;
+        break;
+      default:
+        val = 0;
+    }
+
+    this.scores += val;
+  }
+
   protected generateNext(emitNext = true): Shape | undefined {
     if (this.ctx) {
-      const colorIndex = this.getRandomInt(this.colors.size);
-      const shapeIndex = this.getRandomInt(this.shapes.size);
-      const color = this.colors.get(colorIndex) || 'red';
-
-      const nextShape = this.createShape(shapeIndex, color);
+      const nextShape = ShapeFactory.createRandome(this.ctx, this.cellSize);
       if (emitNext) {
         this.next$.next(nextShape);
       }
@@ -284,86 +294,5 @@ export class Game {
       console.log("can't generateNext");
       return undefined;
     }
-  }
-
-  protected createShape(shapeIndex: number, color: string): Shape | undefined {
-    if (!this.ctx) return undefined;
-
-    const position = { x: 120, y: -30 };
-    const velocity = { x: 0, y: 1 };
-
-    switch (shapeIndex) {
-      case 0:
-        //position.y = 0;
-        return new Line(
-          this.ctx,
-          position,
-          color,
-          velocity,
-          this.cellSize,
-          this.cellSize
-        );
-      case 1:
-        return new Box(
-          this.ctx,
-          position,
-          color,
-          velocity,
-          this.cellSize,
-          this.cellSize
-        );
-      case 2:
-        return new LShape(
-          this.ctx,
-          position,
-          color,
-          velocity,
-          this.cellSize,
-          this.cellSize
-        );
-      case 3:
-        return new TShape(
-          this.ctx,
-          position,
-          color,
-          velocity,
-          this.cellSize,
-          this.cellSize
-        );
-      case 4:
-        return new S1Shape(
-          this.ctx,
-          position,
-          color,
-          velocity,
-          this.cellSize,
-          this.cellSize
-        );
-      case 5:
-        return new S2Shape(
-          this.ctx,
-          position,
-          color,
-          velocity,
-          this.cellSize,
-          this.cellSize
-        );
-      case 6:
-        return new L2Shape(
-          this.ctx,
-          position,
-          color,
-          velocity,
-          this.cellSize,
-          this.cellSize
-        );
-      default:
-        console.log("can't createShape by index=", shapeIndex);
-        return undefined;
-    }
-  }
-
-  private getRandomInt(max: number): number {
-    return Math.floor(Math.random() * max);
   }
 }

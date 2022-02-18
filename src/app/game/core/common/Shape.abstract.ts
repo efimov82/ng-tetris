@@ -1,5 +1,6 @@
 import { v4 as uuidv4 } from 'uuid';
-import { Position, Rectangle, Velocity } from '../Rectangle';
+import { Rectangle } from './Rectangle';
+import { Position, Velocity } from './types';
 
 export abstract class Shape {
   protected id: string;
