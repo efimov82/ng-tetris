@@ -21,7 +21,6 @@ export class GameComponent implements OnInit {
 
   public game!: Game;
 
-  // private ctx: CanvasRenderingContext2D | null = null;
   private fieldWidth = 300;
   private fieldHeight = 600;
   private cellSize = 30;
@@ -35,7 +34,6 @@ export class GameComponent implements OnInit {
     this.canvas.nativeElement.width = this.fieldWidth;
     this.canvas.nativeElement.height = this.fieldHeight;
 
-    //this.ctx = this.canvas.nativeElement.getContext('2d');
     this.game = this.gameService.create(this.canvas, this.cellSize);
   }
 
@@ -43,9 +41,9 @@ export class GameComponent implements OnInit {
     if (this.game) {
       this.game.finish();
     }
-    this.game = new Game(this.canvas.nativeElement, this.cellSize);
+    this.game = this.gameService.create(this.canvas, this.cellSize);
     this.game.start();
-    this.canvas.nativeElement.focus();
+    // this.canvas.nativeElement.focus();
   }
 
   public pauseGame() {

@@ -27,17 +27,16 @@ export abstract class Shape {
   }
 
   public update(moveDown = true) {
-    this.draw();
-
     if (moveDown) {
       this.position.y += this.width * this.velocity.y;
     }
     this.initCells();
+    this.draw();
   }
 
   public draw() {
     this.cells.forEach((rectangle, index) => {
-      rectangle.update();
+      rectangle.draw();
     });
   }
 
@@ -103,6 +102,7 @@ export abstract class Shape {
   }
 
   public rotate(): void {
+    // TODO check allow rotate
     this.isVertical = !this.isVertical;
   }
 

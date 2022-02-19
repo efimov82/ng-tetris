@@ -19,7 +19,7 @@ export interface GameStatistic {
 }
 
 export class Game {
-  private ctx: CanvasRenderingContext2D | null = null;
+  private ctx: CanvasRenderingContext2D;
   private level: number = 1;
   private gameTime = 0;
   private removedLines = 0;
@@ -29,7 +29,6 @@ export class Game {
   private current: Shape | undefined;
   private next: Shape | undefined = undefined;
   private heap: Heap | undefined;
-  private _freesed = false;
 
   private level$ = new BehaviorSubject(this.level);
   private gameTime$ = new BehaviorSubject(this.gameTime);
@@ -43,81 +42,11 @@ export class Game {
   private downVelocity = 1;
 
   constructor(private canvas: HTMLCanvasElement, private cellSize: number) {
-    if (!canvas) {
-      throw new Error('Canvas is not available');
-    }
-  }
+    const ctx = this.canvas.getContext('2d');
+    if (!ctx) throw new Error('Canvas context not available');
 
-  public update() {
-    if (!this.ctx || !this.current || !this.heap) return;
-
-    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-    this.heap.draw(this.current);
-    if (this.state !== GameState.started) {
-      this.current.draw();
-      return;
-    }
-
-    if (this.detectCollisions(this.current)) {
-      this.heap.add(this.current);
-      const removedLines = this.heap.removeCompletedLines();
-      this.removedLines += removedLines;
-
-      if (this.heap.isTouchTop()) {
-        this.gameOver();
-        return;
-      }
-
-      this.current = this.next;
-      this.next = this.generateNext();
-
-      this.calculateScores(removedLines);
-      this.level = Math.floor(this.removedLines / 20) + 1;
-    } else {
-      this.current.update(this.needMoveDown());
-    }
-  }
-
-  public moveLeft() {
-    if (this.state === GameState.started && this.current && !this._freesed) {
-      if (this.heap?.isAllowedMoveLeft(this.current)) {
-        this.current.moveLeft();
-      }
-    }
-  }
-
-  public moveRight() {
-    if (this.state === GameState.started && this.current && !this._freesed) {
-      if (this.heap?.isAllowedMoveRight(this.current)) {
-        this.current.moveRight();
-      }
-    }
-  }
-  public moveDownStart() {
-    if (this.state === GameState.started && this.current) {
-      this.downVelocity = 2;
-    }
-  }
-  public moveDownStop() {
-    if (this.state === GameState.started && this.current) {
-      this.downVelocity = 1;
-    }
-  }
-
-  public rotateCurrent() {
-    if (this.state === GameState.started && this.current) {
-      this.current.rotate();
-    }
-  }
-
-  public moveHardDown() {
-    if (this.state === GameState.started && this.current && this.heap) {
-      const futureRects = this.heap.getAvatar(this.current);
-      const firstRect = futureRects[0];
-      const pos = this.current.getPosition();
-      pos.y = firstRect.getPosition().y;
-      // console.log(firstRect, pos);
-    }
+    this.ctx = ctx;
+    this.init();
   }
 
   public start() {
@@ -139,6 +68,88 @@ export class Game {
       this.update();
     }
   };
+
+  public moveHardDown() {
+    if (this.state === GameState.started && this.current && this.heap) {
+      const futureRects = this.heap.getAvatar(this.current);
+      const firstRect = futureRects[0];
+      const pos = this.current.getPosition();
+      pos.y = firstRect.getPosition().y;
+
+      this.current.setPosition(pos);
+      this.current.update(false);
+
+      this.addCurrentShapeToHeap();
+    }
+  }
+
+  public update() {
+    if (!this.current || !this.heap) return;
+
+    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    this.heap.draw(this.current);
+    if (this.state !== GameState.started) {
+      this.current.draw();
+      return;
+    }
+
+    if (this.detectCollisions(this.current)) {
+      this.addCurrentShapeToHeap();
+    } else {
+      this.current.update(this.needMoveDown());
+    }
+  }
+
+  protected addCurrentShapeToHeap() {
+    if (!this.current || !this.heap) return;
+
+    const res = this.heap.add(this.current);
+    const removedLines = this.heap.removeCompletedLines();
+    this.removedLines += removedLines;
+
+    if (this.heap.isTouchTop()) {
+      this.gameOver();
+      return;
+    }
+
+    this.current = this.next;
+    this.next = this.generateNext();
+
+    this.calculateScores(removedLines);
+    this.level = Math.floor(this.removedLines / 20) + 1;
+  }
+
+  public moveLeft() {
+    if (this.state === GameState.started && this.current) {
+      if (this.heap?.isAllowedMoveLeft(this.current)) {
+        this.current.moveLeft();
+      }
+    }
+  }
+
+  public moveRight() {
+    if (this.state === GameState.started && this.current) {
+      if (this.heap?.isAllowedMoveRight(this.current)) {
+        this.current.moveRight();
+      }
+    }
+  }
+  public moveDownStart() {
+    if (this.state === GameState.started && this.current) {
+      this.downVelocity = 2;
+    }
+  }
+  public moveDownStop() {
+    if (this.state === GameState.started && this.current) {
+      this.downVelocity = 1;
+    }
+  }
+
+  public rotateCurrent() {
+    if (this.state === GameState.started && this.current) {
+      this.current.rotate();
+    }
+  }
 
   public finish() {
     cancelAnimationFrame(this.animationFrame);
@@ -184,15 +195,13 @@ export class Game {
   }
 
   protected init() {
-    this.ctx = this.canvas.getContext('2d');
-    if (this.ctx) {
-      const rows = this.canvas.height / this.cellSize;
-      const cols = this.canvas.width / this.cellSize;
+    const rows = this.canvas.height / this.cellSize;
+    const cols = this.canvas.width / this.cellSize;
 
-      this.heap = new Heap(rows, cols, this.cellSize);
-      this.current = this.generateNext();
-      this.next = this.generateNext();
-    }
+    this.heap = new Heap(rows, cols, this.cellSize);
+    this.current = this.generateNext();
+    this.next = this.generateNext();
+
     this.state = GameState.created;
     this.scores = 0;
     this.removedLines = 0;
@@ -200,7 +209,6 @@ export class Game {
   }
 
   protected detectCollisions(obj: Shape): boolean {
-    this._freesed = true;
     let res = false;
 
     const rectangles = obj.getRectangles();
@@ -211,15 +219,14 @@ export class Game {
       }
     });
 
-    this._freesed = false;
     return res;
   }
 
   protected needMoveDown(): boolean {
-    const levelSpeed = this.getLevelSpeed();
-    const updateInterval = (1000 - levelSpeed) / this.downVelocity;
-    if (Date.now() - this.lastUpdate > updateInterval) {
-      this.lastUpdate = Date.now();
+    const updateInterval = this.getLevelSpeed() / this.downVelocity;
+    const timestamp = Date.now();
+    if (timestamp - this.lastUpdate > updateInterval) {
+      this.lastUpdate = timestamp;
       return true;
     }
 
@@ -229,17 +236,19 @@ export class Game {
   protected getLevelSpeed(): number {
     switch (this.level) {
       case 1:
-        return 0;
+        return 1000;
       case 2:
-        return 300;
+        return 800;
       case 3:
-        return 500;
+        return 700;
       case 4:
         return 600;
       case 5:
-        return 700;
+        return 500;
+      case 6:
+        return 400;
       default:
-        return 800;
+        return 300;
     }
   }
 
@@ -284,15 +293,10 @@ export class Game {
   }
 
   protected generateNext(emitNext = true): Shape | undefined {
-    if (this.ctx) {
-      const nextShape = ShapeFactory.createRandome(this.ctx, this.cellSize);
-      if (emitNext) {
-        this.next$.next(nextShape);
-      }
-      return nextShape;
-    } else {
-      console.log("can't generateNext");
-      return undefined;
+    const nextShape = ShapeFactory.createRandome(this.ctx, this.cellSize);
+    if (emitNext) {
+      this.next$.next(nextShape);
     }
+    return nextShape;
   }
 }

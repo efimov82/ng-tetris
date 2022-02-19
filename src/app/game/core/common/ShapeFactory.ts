@@ -34,7 +34,7 @@ export class ShapeFactory {
     color: string,
     cellSize: number
   ): Shape {
-    const position = { x: 120, y: -30 };
+    const position = { x: 120, y: 0 };
     const velocity = { x: 0, y: 1 };
 
     switch (name) {
