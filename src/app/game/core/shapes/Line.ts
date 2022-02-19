@@ -5,17 +5,17 @@ export class Line extends Shape {
 
   public getWidth(): number {
     if (this.isVertical) {
-      return this.width;
+      return this.cellSize;
     } else {
-      return this.width * 4;
+      return this.cellSize * 4;
     }
   }
 
   public getHeight(): number {
     if (this.isVertical) {
-      return this.height * 4;
+      return this.cellSize * 4;
     } else {
-      return this.height;
+      return this.cellSize;
     }
   }
   protected initCells(): void {
@@ -23,14 +23,14 @@ export class Line extends Shape {
 
     if (this.isVertical) {
       this.cells.push(this.createCell(0, 0));
-      this.cells.push(this.createCell(0, 30));
-      this.cells.push(this.createCell(0, 60));
-      this.cells.push(this.createCell(0, 90));
+      this.cells.push(this.createCell(0, this.cellSize));
+      this.cells.push(this.createCell(0, this.cellSize * 2));
+      this.cells.push(this.createCell(0, this.cellSize * 3));
     } else {
       this.cells.push(this.createCell(0, 0));
-      this.cells.push(this.createCell(30, 0));
-      this.cells.push(this.createCell(60, 0));
-      this.cells.push(this.createCell(90, 0));
+      this.cells.push(this.createCell(this.cellSize, 0));
+      this.cells.push(this.createCell(this.cellSize * 2, 0));
+      this.cells.push(this.createCell(this.cellSize * 3, 0));
     }
   }
 }

@@ -5,17 +5,17 @@ export class L2Shape extends Shape {
 
   public getWidth(): number {
     if (this.orintation === 0 || this.orintation === 2) {
-      return this.width * 2;
+      return this.cellSize * 2;
     } else {
-      return this.width * 3;
+      return this.cellSize * 3;
     }
   }
 
   public getHeight(): number {
     if (this.orintation === 0 || this.orintation === 2) {
-      return this.height * 3;
+      return this.cellSize * 3;
     } else {
-      return this.height * 2;
+      return this.cellSize * 2;
     }
   }
 
@@ -28,27 +28,27 @@ export class L2Shape extends Shape {
     switch (this.orintation) {
       case 0:
         this.cells.push(this.createCell(0, 0));
-        this.cells.push(this.createCell(0, 30));
-        this.cells.push(this.createCell(0, 60));
-        this.cells.push(this.createCell(30, 0));
+        this.cells.push(this.createCell(0, this.cellSize));
+        this.cells.push(this.createCell(0, this.cellSize * 2));
+        this.cells.push(this.createCell(this.cellSize, 0));
         break;
       case 1:
         this.cells.push(this.createCell(0, 0));
-        this.cells.push(this.createCell(0, 30));
-        this.cells.push(this.createCell(30, 30));
-        this.cells.push(this.createCell(60, 30));
+        this.cells.push(this.createCell(0, this.cellSize));
+        this.cells.push(this.createCell(this.cellSize, this.cellSize));
+        this.cells.push(this.createCell(this.cellSize * 2, this.cellSize));
         break;
       case 2:
-        this.cells.push(this.createCell(30, 0));
-        this.cells.push(this.createCell(30, 30));
-        this.cells.push(this.createCell(30, 60));
-        this.cells.push(this.createCell(0, 60));
+        this.cells.push(this.createCell(this.cellSize, 0));
+        this.cells.push(this.createCell(this.cellSize, this.cellSize));
+        this.cells.push(this.createCell(this.cellSize, this.cellSize * 2));
+        this.cells.push(this.createCell(0, this.cellSize * 2));
         break;
       case 3:
         this.cells.push(this.createCell(0, 0));
-        this.cells.push(this.createCell(30, 0));
-        this.cells.push(this.createCell(60, 0));
-        this.cells.push(this.createCell(60, 30));
+        this.cells.push(this.createCell(this.cellSize, 0));
+        this.cells.push(this.createCell(this.cellSize * 2, 0));
+        this.cells.push(this.createCell(this.cellSize * 2, this.cellSize));
         break;
       default:
         throw new Error(`Wrong orintation: ${this.orintation}`);

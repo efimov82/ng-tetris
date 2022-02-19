@@ -17,7 +17,7 @@
         <game-statistic [game]="game"></game-statistic>
       </div>
       <div class="row">
-        <next-shape [next]="game.getNext() | async"></next-shape>
+        <next-shape [nextItems]="game.getNextItems() | async"></next-shape>
       </div>
     </div>
   </div>

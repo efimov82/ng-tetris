@@ -7,9 +7,8 @@ import {
   SimpleChanges,
   ViewChild,
 } from '@angular/core';
-import { Rectangle } from '../../core/common/Rectangle';
 import { Shape } from '../../core/common/Shape.abstract';
-import { Position } from '../../core/common/types';
+import { ShapeFactory } from '../../core/common/ShapeFactory';
 
 @Component({
   selector: 'next-shape',
@@ -17,45 +16,46 @@ import { Position } from '../../core/common/types';
   styleUrls: ['./next-shape.component.scss'],
 })
 export class NextShapeComponent implements OnInit, OnChanges {
-  @Input() next!: Shape | null | undefined;
+  @Input() nextItems!: Shape[] | null;
 
   @ViewChild('nextShapeCanvas', { static: true })
   canvas!: ElementRef<HTMLCanvasElement>;
 
   private ctx: CanvasRenderingContext2D | null = null;
+  private cellSize = 20;
 
   ngOnInit() {
     this.canvas.nativeElement.width = 120;
-    this.canvas.nativeElement.height = 120;
+    this.canvas.nativeElement.height = 380;
 
     this.ctx = this.canvas.nativeElement.getContext('2d');
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    const next = changes['next'].currentValue;
-    if (!next) return;
+    const nextItems = changes['nextItems'].currentValue;
+    if (!nextItems) return;
 
-    const rects: Rectangle[] = [];
-    const velocity = { x: 0, y: 0 };
+    const rects: Shape[] = [];
+    let y = 0;
+    nextItems.forEach((shape: Shape, index: number) => {
+      if (this.ctx) {
+        const smallShape = ShapeFactory.create(
+          shape.constructor.name,
+          this.ctx,
+          shape.getColor(),
+          this.cellSize,
+          { x: 0, y }
+        );
 
-    next['cells'].forEach((originRect: Rectangle) => {
-      const rect = new Rectangle(
-        originRect.getId(),
-        this.ctx,
-        this.getPosition(originRect.getPosition()),
-        originRect.getWidth(),
-        originRect.getHeight(),
-        originRect.getColor(),
-        velocity
-      );
-
-      rects.push(rect);
+        y += smallShape.getHeight() + this.cellSize;
+        rects.push(smallShape);
+      }
     });
 
     this.draw(rects);
   }
 
-  private draw(rects: Rectangle[]) {
+  private draw(shapes: Shape[]) {
     if (!this.ctx) return;
 
     this.ctx.clearRect(
@@ -64,17 +64,9 @@ export class NextShapeComponent implements OnInit, OnChanges {
       this.canvas.nativeElement.width,
       this.canvas.nativeElement.height
     );
-    rects.forEach((rect) => {
-      rect.draw();
+
+    shapes.forEach((shape) => {
+      shape.draw();
     });
-  }
-
-  private getPosition(originPosition: Position): Position {
-    const diffPosition = { x: 120, y: -30 };
-
-    return {
-      x: originPosition.x - diffPosition.x,
-      y: originPosition.y - diffPosition.y,
-    };
   }
 }

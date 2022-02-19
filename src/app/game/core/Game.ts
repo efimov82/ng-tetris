@@ -1,6 +1,8 @@
 import { BehaviorSubject, Observable } from 'rxjs';
+import { Queue } from './common/Queue';
 import { Shape } from './common/Shape.abstract';
 import { ShapeFactory } from './common/ShapeFactory';
+import { calculateScores, getLevelSpeed } from './common/utils';
 import { Heap } from './Heap';
 
 export enum GameState {
@@ -29,13 +31,14 @@ export class Game {
   private current: Shape | undefined;
   private next: Shape | undefined = undefined;
   private heap: Heap | undefined;
+  private queue: Queue<Shape> = new Queue(3);
 
   private level$ = new BehaviorSubject(this.level);
   private gameTime$ = new BehaviorSubject(this.gameTime);
   private removedLines$ = new BehaviorSubject(this.removedLines);
   private scores$ = new BehaviorSubject<number>(this.scores);
   private state$ = new BehaviorSubject(this.state);
-  private next$ = new BehaviorSubject<Shape | undefined>(this.next);
+  private nextItems$ = new BehaviorSubject<Shape[]>(this.queue.getItems());
 
   private animationFrame = 0;
   private lastUpdate: number = 0;
@@ -57,8 +60,8 @@ export class Game {
     this.animate();
   }
 
-  public animate = () => {
-    this.animationFrame = requestAnimationFrame(this.animate);
+  public animate() {
+    this.animationFrame = requestAnimationFrame(this.animate.bind(this));
     if (this.state === GameState.finished) {
       cancelAnimationFrame(this.animationFrame);
       return;
@@ -67,9 +70,9 @@ export class Game {
     } else {
       this.update();
     }
-  };
+  }
 
-  public moveHardDown() {
+  public hardDrop() {
     if (this.state === GameState.started && this.current && this.heap) {
       const futureRects = this.heap.getAvatar(this.current);
       const firstRect = futureRects[0];
@@ -112,10 +115,12 @@ export class Game {
       return;
     }
 
-    this.current = this.next;
-    this.next = this.generateNext();
+    this.current = this.queue.pop();
 
-    this.calculateScores(removedLines);
+    this.queue.push(this.generateNext());
+    this.nextItems$.next([...this.queue.getItems()]);
+
+    this.scores += calculateScores(removedLines);
     this.level = Math.floor(this.removedLines / 20) + 1;
   }
 
@@ -185,8 +190,8 @@ export class Game {
     return this.scores$.asObservable();
   }
 
-  public getNext(): Observable<Shape | undefined> {
-    return this.next$.asObservable();
+  public getNextItems(): Observable<Shape[]> {
+    return this.nextItems$.asObservable();
   }
 
   protected setState(state: GameState) {
@@ -201,6 +206,10 @@ export class Game {
     this.heap = new Heap(rows, cols, this.cellSize);
     this.current = this.generateNext();
     this.next = this.generateNext();
+
+    this.queue.push(this.next);
+    this.queue.push(this.generateNext());
+    this.queue.push(this.generateNext());
 
     this.state = GameState.created;
     this.scores = 0;
@@ -223,7 +232,7 @@ export class Game {
   }
 
   protected needMoveDown(): boolean {
-    const updateInterval = this.getLevelSpeed() / this.downVelocity;
+    const updateInterval = getLevelSpeed(this.level) / this.downVelocity;
     const timestamp = Date.now();
     if (timestamp - this.lastUpdate > updateInterval) {
       this.lastUpdate = timestamp;
@@ -231,25 +240,6 @@ export class Game {
     }
 
     return false;
-  }
-
-  protected getLevelSpeed(): number {
-    switch (this.level) {
-      case 1:
-        return 1000;
-      case 2:
-        return 800;
-      case 3:
-        return 700;
-      case 4:
-        return 600;
-      case 5:
-        return 500;
-      case 6:
-        return 400;
-      default:
-        return 300;
-    }
   }
 
   protected createTimer() {
@@ -270,33 +260,7 @@ export class Game {
     clearInterval(this.timer);
   }
 
-  protected calculateScores(removedLines: number): void {
-    let val = 0;
-    switch (removedLines) {
-      case 1:
-        val = 100;
-        break;
-      case 2:
-        val = 300;
-        break;
-      case 3:
-        val = 500;
-        break;
-      case 4:
-        val = 900;
-        break;
-      default:
-        val = 0;
-    }
-
-    this.scores += val;
-  }
-
-  protected generateNext(emitNext = true): Shape | undefined {
-    const nextShape = ShapeFactory.createRandome(this.ctx, this.cellSize);
-    if (emitNext) {
-      this.next$.next(nextShape);
-    }
-    return nextShape;
+  protected generateNext(): Shape {
+    return ShapeFactory.createRandome(this.ctx, this.cellSize);
   }
 }

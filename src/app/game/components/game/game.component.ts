@@ -78,7 +78,7 @@ export class GameComponent implements OnInit {
         this.game.moveDownStop();
         break;
       case 'Space':
-        this.game.moveHardDown();
+        this.game.hardDrop();
         break;
     }
   }

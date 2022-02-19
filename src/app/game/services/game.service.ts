@@ -16,7 +16,7 @@ export class GameService {
     return this.game;
   }
 
-  public getNextShape(): Observable<Shape | undefined> | undefined {
-    return this.game?.getNext();
+  public getNextShapes(): Observable<Shape[] | undefined> | undefined {
+    return this.game?.getNextItems();
   }
 }

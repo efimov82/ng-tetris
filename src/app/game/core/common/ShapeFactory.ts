@@ -29,31 +29,55 @@ export class ShapeFactory {
   }
 
   static create(
-    name: Shapes | undefined,
+    name: Shapes | string | undefined,
     ctx: CanvasRenderingContext2D,
     color: string,
-    cellSize: number
+    cellSize: number,
+    position = { x: 120, y: 0 },
+    velocity = { x: 0, y: 1 }
   ): Shape {
-    const position = { x: 120, y: 0 };
-    const velocity = { x: 0, y: 1 };
+    if (typeof name === 'string') {
+      name = ShapeFactory.getShapeTypeName(name);
+    }
 
     switch (name) {
       case Shapes.Line:
-        return new Line(ctx, position, color, velocity, cellSize, cellSize);
+        return new Line(ctx, position, color, velocity, cellSize);
       case Shapes.Box:
-        return new Box(ctx, position, color, velocity, cellSize, cellSize);
+        return new Box(ctx, position, color, velocity, cellSize);
       case Shapes.LShape:
-        return new LShape(ctx, position, color, velocity, cellSize, cellSize);
+        return new LShape(ctx, position, color, velocity, cellSize);
       case Shapes.TShape:
-        return new TShape(ctx, position, color, velocity, cellSize, cellSize);
+        return new TShape(ctx, position, color, velocity, cellSize);
       case Shapes.S1Shape:
-        return new S1Shape(ctx, position, color, velocity, cellSize, cellSize);
+        return new S1Shape(ctx, position, color, velocity, cellSize);
       case Shapes.S2Shape:
-        return new S2Shape(ctx, position, color, velocity, cellSize, cellSize);
+        return new S2Shape(ctx, position, color, velocity, cellSize);
       case Shapes.L2Shape:
-        return new L2Shape(ctx, position, color, velocity, cellSize, cellSize);
+        return new L2Shape(ctx, position, color, velocity, cellSize);
       default:
         throw new Error(`Can't create Shape by name: ${name}`);
+    }
+  }
+
+  static getShapeTypeName(className: string): Shapes {
+    switch (className) {
+      case 'Line':
+        return Shapes.Line;
+      case 'Box':
+        return Shapes.Box;
+      case 'LShape':
+        return Shapes.LShape;
+      case 'TShape':
+        return Shapes.TShape;
+      case 'S1Shape':
+        return Shapes.S1Shape;
+      case 'S2Shape':
+        return Shapes.S2Shape;
+      case 'L2Shape':
+        return Shapes.L2Shape;
+      default:
+        throw new Error('Unknown shape name ' + className);
     }
   }
 }

@@ -15,8 +15,7 @@ export abstract class Shape {
     protected position: Position,
     protected color: string,
     protected velocity: Velocity,
-    protected width: number,
-    protected height: number
+    protected cellSize: number
   ) {
     this.id = uuidv4();
     this.initCells();
@@ -28,7 +27,7 @@ export abstract class Shape {
 
   public update(moveDown = true) {
     if (moveDown) {
-      this.position.y += this.width * this.velocity.y;
+      this.position.y += this.cellSize * this.velocity.y;
     }
     this.initCells();
     this.draw();
@@ -41,8 +40,8 @@ export abstract class Shape {
   }
 
   public moveLeft() {
-    if (this.position.x - this.width >= 0) {
-      this.position.x -= this.width;
+    if (this.position.x - this.cellSize >= 0) {
+      this.position.x -= this.cellSize;
       this.initCells();
     }
   }
@@ -51,10 +50,10 @@ export abstract class Shape {
     if (!this.ctx) return;
 
     if (
-      this.position.x + this.width + this.getWidth() <=
+      this.position.x + this.cellSize + this.getWidth() <=
       this.ctx.canvas.width
     ) {
-      this.position.x += this.width;
+      this.position.x += this.cellSize;
       this.initCells();
     }
   }
@@ -79,8 +78,8 @@ export abstract class Shape {
           this.id,
           this.ctx,
           rect.getPosition(),
-          this.width,
-          this.height,
+          this.cellSize,
+          this.cellSize,
           this.color,
           {
             x: 0,
@@ -95,6 +94,10 @@ export abstract class Shape {
 
   public getId(): string {
     return this.id;
+  }
+
+  public getColor(): string {
+    return this.color;
   }
 
   public setVelocity(velocity: Velocity): void {
@@ -113,7 +116,7 @@ export abstract class Shape {
         x: rect.getPosition().x,
         y: rect.getPosition().y,
       };
-      newPos.x -= this.width;
+      newPos.x -= this.cellSize;
       res.push(newPos);
     });
 
@@ -127,7 +130,7 @@ export abstract class Shape {
         x: rect.getPosition().x,
         y: rect.getPosition().y,
       };
-      newPos.x += this.width;
+      newPos.x += this.cellSize;
       res.push(newPos);
     });
 
@@ -139,8 +142,8 @@ export abstract class Shape {
       this.id,
       this.ctx,
       { x: this.position.x + x, y: this.position.y + y },
-      this.width,
-      this.height,
+      this.cellSize,
+      this.cellSize,
       this.color,
       {
         x: 0,
