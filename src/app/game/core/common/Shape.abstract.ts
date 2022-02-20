@@ -1,6 +1,6 @@
 import { v4 as uuidv4 } from 'uuid';
 import { Rectangle } from './Rectangle';
-import { Position, Velocity } from './types';
+import { Color, Position, Velocity } from './types';
 
 export abstract class Shape {
   protected id: string;
@@ -13,7 +13,7 @@ export abstract class Shape {
   constructor(
     protected ctx: CanvasRenderingContext2D | null,
     protected position: Position,
-    protected color: string,
+    protected color: Color<string>,
     protected velocity: Velocity,
     protected cellSize: number
   ) {
@@ -96,7 +96,7 @@ export abstract class Shape {
     return this.id;
   }
 
-  public getColor(): string {
+  public getColor(): Color<string> {
     return this.color;
   }
 

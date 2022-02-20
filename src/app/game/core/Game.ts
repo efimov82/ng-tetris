@@ -119,7 +119,7 @@ export class Game {
       );
 
       this.ctx.globalAlpha = 1;
-      this.noticeOpacity -= 0.005;
+      this.noticeOpacity -= 0.003;
 
       if (this.noticeOpacity <= 0) {
         this.notice = '';

@@ -1,5 +1,4 @@
-import { Position, Velocity } from './types';
-import { getGradientColor } from './utils';
+import { Color, Position, Velocity } from './types';
 
 export class Rectangle {
   constructor(
@@ -8,7 +7,7 @@ export class Rectangle {
     protected position: Position,
     protected width: number,
     protected height: number,
-    protected color: string,
+    protected color: Color<string>,
     protected velocity: Velocity,
     protected radius = 4
   ) {}
@@ -54,7 +53,7 @@ export class Rectangle {
     this.ctx.closePath();
 
     if (full) {
-      this.ctx.fillStyle = this.color;
+      this.ctx.fillStyle = this.color.base;
       this.ctx.fill();
 
       const gradient = this.ctx.createRadialGradient(
@@ -66,8 +65,8 @@ export class Rectangle {
         25
       );
 
-      gradient.addColorStop(0, getGradientColor(this.color));
-      gradient.addColorStop(1, this.color);
+      gradient.addColorStop(0, this.color.highlight);
+      gradient.addColorStop(1, this.color.base);
       this.ctx.fillStyle = gradient;
       this.ctx.fill();
     }
@@ -109,7 +108,7 @@ export class Rectangle {
     this.velocity = velocity;
   }
 
-  public getColor(): string {
+  public getColor(): Color<string> {
     return this.color;
   }
 

@@ -3,6 +3,7 @@ import { Rectangle } from './common/Rectangle';
 import { Box, Line } from './shapes';
 
 fdescribe('Heap', () => {
+  const color = { base: 'red', highlight: 'blue' };
   const velocity = { x: 0, y: 0 };
   const cellSize = 30;
   let heap: Heap;
@@ -13,7 +14,7 @@ fdescribe('Heap', () => {
 
   fit('should add shape', () => {
     let pos = { x: 0, y: 270 };
-    const line = new Line(null, pos, 'red', velocity, cellSize);
+    const line = new Line(null, pos, color, velocity, cellSize);
 
     expect(heap.add(line)).toBeTruthy();
     const field10 = heap.getField(10);
@@ -27,11 +28,11 @@ fdescribe('Heap', () => {
 
   fit('should not add shape to not empty cell', () => {
     let pos = { x: 0, y: 270 };
-    const line = new Line(null, pos, 'red', velocity, cellSize);
+    const line = new Line(null, pos, color, velocity, cellSize);
     expect(heap.add(line)).toBeTruthy();
 
     pos = { x: 60, y: 270 };
-    const line2 = new Line(null, pos, 'red', velocity, cellSize);
+    const line2 = new Line(null, pos, color, velocity, cellSize);
     expect(heap.add(line2)).toBeFalsy();
 
     const field10 = heap.getField(10);
@@ -45,10 +46,10 @@ fdescribe('Heap', () => {
 
   fit('should allow move left', () => {
     let pos = { x: 0, y: 240 };
-    const box1 = new Box(null, pos, 'red', velocity, cellSize);
+    const box1 = new Box(null, pos, color, velocity, cellSize);
 
     const pos2 = { x: 120, y: 60 };
-    const box2 = new Box(null, pos2, 'red', velocity, cellSize);
+    const box2 = new Box(null, pos2, color, velocity, cellSize);
 
     heap.add(box1);
     heap.add(box2);
@@ -58,10 +59,10 @@ fdescribe('Heap', () => {
 
   fit('should not allow move left', () => {
     let pos = { x: 0, y: 240 };
-    const box1 = new Box(null, pos, 'red', velocity, cellSize);
+    const box1 = new Box(null, pos, color, velocity, cellSize);
 
     pos = { x: 60, y: 220 };
-    const box2 = new Box(null, pos, 'red', velocity, cellSize);
+    const box2 = new Box(null, pos, color, velocity, cellSize);
 
     heap.add(box1);
     heap.add(box2);
@@ -71,10 +72,10 @@ fdescribe('Heap', () => {
 
   fit('should allow move right', () => {
     let pos = { x: 90, y: 120 };
-    const box1 = new Box(null, pos, 'red', velocity, cellSize);
+    const box1 = new Box(null, pos, color, velocity, cellSize);
 
     pos = { x: 30, y: 10 };
-    const box2 = new Box(null, pos, 'red', velocity, cellSize);
+    const box2 = new Box(null, pos, color, velocity, cellSize);
 
     heap.add(box1);
     heap.add(box2);
@@ -84,10 +85,10 @@ fdescribe('Heap', () => {
 
   fit('should not allow move right', () => {
     let pos = { x: 90, y: 120 };
-    const box1 = new Box(null, pos, 'red', velocity, cellSize);
+    const box1 = new Box(null, pos, color, velocity, cellSize);
 
     pos = { x: 30, y: 110 };
-    const box2 = new Box(null, pos, 'red', velocity, cellSize);
+    const box2 = new Box(null, pos, color, velocity, cellSize);
 
     heap.add(box1);
     heap.add(box2);
@@ -97,13 +98,13 @@ fdescribe('Heap', () => {
 
   fit('should remove complited line', () => {
     let pos = { x: 0, y: 270 };
-    const line1 = new Line(null, pos, 'red', velocity, cellSize);
+    const line1 = new Line(null, pos, color, velocity, cellSize);
 
     pos = { x: 120, y: 270 };
-    const line2 = new Line(null, pos, 'red', velocity, cellSize);
+    const line2 = new Line(null, pos, color, velocity, cellSize);
 
     pos = { x: 240, y: 270 };
-    const line3 = new Line(null, pos, 'red', velocity, cellSize);
+    const line3 = new Line(null, pos, color, velocity, cellSize);
 
     heap.add(line1);
     heap.add(line2);
@@ -127,22 +128,22 @@ fdescribe('Heap', () => {
 
   fit('should remove 2 complited lines', () => {
     let pos = { x: 0, y: 240 };
-    const box1 = new Box(null, pos, 'red', velocity, cellSize);
+    const box1 = new Box(null, pos, color, velocity, cellSize);
 
     pos = { x: 60, y: 240 };
-    const box2 = new Box(null, pos, 'red', velocity, cellSize);
+    const box2 = new Box(null, pos, color, velocity, cellSize);
 
     pos = { x: 120, y: 240 };
-    const box3 = new Box(null, pos, 'red', velocity, cellSize);
+    const box3 = new Box(null, pos, color, velocity, cellSize);
 
     pos = { x: 180, y: 240 };
-    const box4 = new Box(null, pos, 'red', velocity, cellSize);
+    const box4 = new Box(null, pos, color, velocity, cellSize);
 
     pos = { x: 240, y: 240 };
-    const box5 = new Box(null, pos, 'red', velocity, cellSize);
+    const box5 = new Box(null, pos, color, velocity, cellSize);
 
     pos = { x: 300, y: 240 };
-    const box6 = new Box(null, pos, 'red', velocity, cellSize);
+    const box6 = new Box(null, pos, color, velocity, cellSize);
 
     expect(heap.add(box1)).toBeTruthy();
     expect(heap.add(box2)).toBeTruthy();
@@ -168,27 +169,27 @@ fdescribe('Heap', () => {
   fit('should remove mixed lines', () => {
     // first complited line
     let pos = { x: 0, y: 270 };
-    heap.add(new Line(null, pos, 'red', velocity, cellSize));
+    heap.add(new Line(null, pos, color, velocity, cellSize));
 
     pos = { x: 120, y: 270 };
-    heap.add(new Line(null, pos, 'red', velocity, cellSize));
+    heap.add(new Line(null, pos, color, velocity, cellSize));
 
     pos = { x: 240, y: 270 };
-    heap.add(new Line(null, pos, 'red', velocity, cellSize));
+    heap.add(new Line(null, pos, color, velocity, cellSize));
 
     // middle uncompleted line
-    const line1 = new Line(null, { x: 30, y: 240 }, 'blue', velocity, cellSize);
+    const line1 = new Line(null, { x: 30, y: 240 }, color, velocity, cellSize);
     heap.add(line1);
 
     // second complited line
     pos = { x: 0, y: 210 };
-    heap.add(new Line(null, pos, 'red', velocity, cellSize));
+    heap.add(new Line(null, pos, color, velocity, cellSize));
 
     pos = { x: 120, y: 210 };
-    heap.add(new Line(null, pos, 'red', velocity, cellSize));
+    heap.add(new Line(null, pos, color, velocity, cellSize));
 
     pos = { x: 240, y: 210 };
-    heap.add(new Line(null, pos, 'red', velocity, cellSize));
+    heap.add(new Line(null, pos, color, velocity, cellSize));
 
     expect(heap.removeCompletedLines()).toBe(2);
     const field = heap.getField(10);
@@ -206,18 +207,18 @@ fdescribe('Heap', () => {
 
   fit('should move down all cells after remove line', () => {
     let pos = { x: 0, y: 270 };
-    const line1 = new Line(null, pos, 'red', velocity, cellSize);
+    const line1 = new Line(null, pos, color, velocity, cellSize);
 
     pos = { x: 120, y: 270 };
-    const line2 = new Line(null, pos, 'red', velocity, cellSize);
+    const line2 = new Line(null, pos, color, velocity, cellSize);
 
     pos = { x: 240, y: 270 };
-    const line3 = new Line(null, pos, 'red', velocity, cellSize);
+    const line3 = new Line(null, pos, color, velocity, cellSize);
 
     // box
     const originY = 210;
     pos = { x: 240, y: originY };
-    const box1 = new Box(null, pos, 'green', velocity, cellSize);
+    const box1 = new Box(null, pos, color, velocity, cellSize);
 
     expect(heap.add(line1)).toBeTruthy();
     expect(heap.add(line2)).toBeTruthy();
@@ -244,16 +245,16 @@ fdescribe('Heap', () => {
 
   fit('should move down all cells after remove line #2', () => {
     let pos = { x: 0, y: 270 };
-    const line1 = new Line(null, pos, 'red', velocity, cellSize);
+    const line1 = new Line(null, pos, color, velocity, cellSize);
 
     pos = { x: 120, y: 270 };
-    const line2 = new Line(null, pos, 'red', velocity, cellSize);
+    const line2 = new Line(null, pos, color, velocity, cellSize);
 
     pos = { x: 240, y: 240 };
-    const box1 = new Box(null, pos, 'green', velocity, cellSize);
+    const box1 = new Box(null, pos, color, velocity, cellSize);
 
     pos = { x: 300, y: 240 };
-    const box2 = new Box(null, pos, 'black', velocity, cellSize);
+    const box2 = new Box(null, pos, color, velocity, cellSize);
 
     expect(heap.add(line1)).toBeTruthy();
     expect(heap.add(line2)).toBeTruthy();
@@ -271,16 +272,16 @@ fdescribe('Heap', () => {
 
   fit('should add shape after removing line', () => {
     let pos = { x: 0, y: 270 };
-    const line1 = new Line(null, pos, 'red', velocity, cellSize);
+    const line1 = new Line(null, pos, color, velocity, cellSize);
 
     pos = { x: 120, y: 270 };
-    const line2 = new Line(null, pos, 'red', velocity, cellSize);
+    const line2 = new Line(null, pos, color, velocity, cellSize);
 
     pos = { x: 240, y: 240 };
-    const box1 = new Box(null, pos, 'green', velocity, cellSize);
+    const box1 = new Box(null, pos, color, velocity, cellSize);
 
     pos = { x: 300, y: 240 };
-    const box2 = new Box(null, pos, 'red', velocity, cellSize);
+    const box2 = new Box(null, pos, color, velocity, cellSize);
 
     expect(heap.add(line1)).toBeTruthy();
     expect(heap.add(line2)).toBeTruthy();
@@ -290,13 +291,13 @@ fdescribe('Heap', () => {
     expect(heap.removeCompletedLines()).toBe(1);
 
     pos = { x: 240, y: 240 };
-    const line3 = new Line(null, pos, 'black', velocity, cellSize);
+    const line3 = new Line(null, pos, color, velocity, cellSize);
     expect(heap.add(line3)).toBeTruthy();
   });
 
   fit('should return shape avatar on bottom', () => {
     const pos = { x: 120, y: 0 };
-    const box = new Box(null, pos, 'red', velocity, cellSize);
+    const box = new Box(null, pos, color, velocity, cellSize);
 
     const rects = heap.getAvatar(box);
 
@@ -316,12 +317,12 @@ fdescribe('Heap', () => {
 
   fit('should return avatar on top of the bottom shape', () => {
     let pos = { x: 30, y: 270 };
-    const box = new Line(null, pos, 'red', velocity, cellSize);
+    const box = new Line(null, pos, color, velocity, cellSize);
 
     expect(heap.add(box)).toBeTruthy();
 
     pos.y = 150;
-    const line = new Line(null, pos, 'blue', velocity, cellSize);
+    const line = new Line(null, pos, color, velocity, cellSize);
     line.rotate();
     line.update(false);
 

@@ -106,7 +106,7 @@ export class Heap {
     if (current) {
       const futureRects = this.getAvatar(current);
       futureRects.forEach((rect) => {
-        rect.draw(false, rect.getColor());
+        rect.draw(false, rect.getColor().base);
       });
     }
   }

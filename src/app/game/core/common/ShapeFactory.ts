@@ -9,14 +9,17 @@ import {
 } from '../shapes';
 import { COLORS, SHAPES_LIST } from './constants';
 import { Shape } from './Shape.abstract';
-import { Shapes } from './types';
+import { Color, Shapes } from './types';
 import { getRandomInt } from './utils';
 
 export class ShapeFactory {
   static createRandome(ctx: CanvasRenderingContext2D, cellSize: number): Shape {
     const colorIndex = getRandomInt(COLORS.size);
     const shapeIndex = getRandomInt(SHAPES_LIST.size);
-    const color = COLORS.get(colorIndex) || 'red';
+    const color = COLORS.get(colorIndex) || {
+      base: 'DeepPink',
+      highlight: 'LightPink',
+    };
 
     const nextShape = ShapeFactory.create(
       SHAPES_LIST.get(shapeIndex),
@@ -31,7 +34,7 @@ export class ShapeFactory {
   static create(
     name: Shapes | string | undefined,
     ctx: CanvasRenderingContext2D,
-    color: string,
+    color: Color<string>,
     cellSize: number,
     position = { x: 120, y: 0 },
     velocity = { x: 0, y: 1 }

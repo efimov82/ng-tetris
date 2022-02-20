@@ -8,6 +8,11 @@ export enum Shapes {
   L2Shape = 'L2Shape',
 }
 
+export type Color<T> = {
+  base: T;
+  highlight: T;
+};
+
 export interface Velocity {
   x: number;
   y: number;

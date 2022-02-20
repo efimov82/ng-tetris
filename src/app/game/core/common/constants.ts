@@ -1,4 +1,4 @@
-import { Shapes } from './types';
+import { Color, Shapes } from './types';
 
 export const SHAPES_LIST: Map<number, Shapes> = new Map([
   [0, Shapes.Line],
@@ -10,14 +10,15 @@ export const SHAPES_LIST: Map<number, Shapes> = new Map([
   [6, Shapes.L2Shape],
 ]);
 
-export const COLORS: Map<number, string> = new Map([
-  [0, 'OrangeRed'],
-  [1, 'green'],
-  [2, 'RoyalBlue'],
-  [3, 'purple'],
-  [4, 'SeaGreen'],
-  [5, 'orange'],
-  [6, 'Maroon'],
-  [7, 'olive'],
-  [8, 'chocolate'],
+export const COLORS: Map<number, Color<string>> = new Map([
+  [0, { base: 'OrangeRed', highlight: 'Orange' }],
+  [1, { base: 'Green', highlight: 'SpringGreen' }],
+  [2, { base: 'RoyalBlue', highlight: 'SkyBlue' }],
+  [3, { base: 'DarkViolet', highlight: 'Violet' }],
+  [4, { base: 'DodgerBlue', highlight: 'Cyan' }],
+  [5, { base: 'Orange', highlight: 'Moccasin' }],
+  [6, { base: 'Brown', highlight: 'LightCoral' }],
+  [7, { base: 'DarkGoldenRod', highlight: 'Yellow' }],
+  [8, { base: 'Chocolate', highlight: 'BlanchedAlmond' }],
+  [9, { base: 'DeepPink', highlight: 'LightPink' }],
 ]);
