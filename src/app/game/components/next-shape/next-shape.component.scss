@@ -1,4 +1,15 @@
 .next {
+  align-items: center;
   margin-top: 10px;
   font-size: 18px;
+  background-color: black;
+  border-radius: 15px;
+
+  border: solid 10px #1f1e1c;
+  width: 160px;
+  height: 280px;
+
+  canvas {
+    margin: 10px;
+  }
 }

@@ -36,16 +36,18 @@ export class NextShapeComponent implements OnInit, OnChanges {
     if (!nextItems) return;
 
     const rects: Shape[] = [];
-    let y = 0;
+    let y = this.cellSize;
 
     nextItems.forEach((shape: Shape, index: number) => {
       if (this.ctx) {
+        const shapeName = shape.constructor.name;
+        const x = this.getPositionX(shapeName);
         const smallShape = ShapeFactory.create(
-          shape.constructor.name,
+          shapeName,
           this.ctx,
           shape.getColor(),
           this.cellSize,
-          { x: 0, y }
+          { x, y }
         );
 
         y += smallShape.getHeight() + this.cellSize;
@@ -56,10 +58,24 @@ export class NextShapeComponent implements OnInit, OnChanges {
     this.draw(rects);
   }
 
+  private getPositionX(name: string): number {
+    switch (name) {
+      case 'Line':
+        return this.cellSize;
+      case 'Box':
+      case 'LShape':
+      case 'L2Shape':
+        return this.cellSize * 2;
+      default:
+        return this.cellSize * 1.5;
+    }
+  }
+
   private draw(shapes: Shape[]) {
     if (!this.ctx) return;
 
-    this.ctx.clearRect(
+    this.ctx.fillStyle = 'black';
+    this.ctx.fillRect(
       0,
       0,
       this.canvas.nativeElement.width,

@@ -118,7 +118,7 @@ export class Game {
     this.current = this.queue.pop();
 
     this.queue.push(this.generateNext());
-    this.nextItems$.next([...this.queue.getItems()]);
+    this.nextItems$.next([...this.queue.getItems()].reverse());
 
     this.scores += calculateScores(removedLines);
     this.level = Math.floor(this.removedLines / 20) + 1;

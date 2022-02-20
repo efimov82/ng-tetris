@@ -14,10 +14,10 @@
       </div>
 
       <div class="row">
-        <game-statistic [game]="game"></game-statistic>
-      </div>
-      <div class="row">
         <next-shape [nextItems]="game.getNextItems() | async"></next-shape>
+      </div>
+      <div class="row mt-2">
+        <game-statistic [game]="game"></game-statistic>
       </div>
     </div>
   </div>
