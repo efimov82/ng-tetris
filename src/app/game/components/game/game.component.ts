@@ -43,7 +43,6 @@ export class GameComponent implements OnInit {
     }
     this.game = this.gameService.create(this.canvas, this.cellSize);
     this.game.start();
-    // this.canvas.nativeElement.focus();
   }
 
   public pauseGame() {

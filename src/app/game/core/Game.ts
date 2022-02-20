@@ -43,6 +43,8 @@ export class Game {
   private animationFrame = 0;
   private lastUpdate: number = 0;
   private downVelocity = 1;
+  private notice = `Let's go!`;
+  private noticeOpacity = 1;
 
   constructor(private canvas: HTMLCanvasElement, private cellSize: number) {
     const ctx = this.canvas.getContext('2d');
@@ -101,6 +103,28 @@ export class Game {
     } else {
       this.current.update(this.needMoveDown());
     }
+
+    this.showNotice();
+  }
+
+  protected showNotice(): void {
+    if (this.notice) {
+      this.ctx.font = '48px serif';
+      this.ctx.fillStyle = 'grey';
+      this.ctx.globalAlpha = this.noticeOpacity;
+      this.ctx.fillText(
+        this.notice,
+        this.canvas.width / 4,
+        this.canvas.height / 3
+      );
+
+      this.ctx.globalAlpha = 1;
+      this.noticeOpacity -= 0.005;
+
+      if (this.noticeOpacity <= 0) {
+        this.notice = '';
+      }
+    }
   }
 
   protected addCurrentShapeToHeap() {
@@ -121,7 +145,16 @@ export class Game {
     this.nextItems$.next([...this.queue.getItems()].reverse());
 
     this.scores += calculateScores(removedLines);
-    this.level = Math.floor(this.removedLines / 20) + 1;
+    this.calculateLevel();
+  }
+
+  protected calculateLevel(): void {
+    const level = Math.floor(this.removedLines / 20) + 1;
+    if (this.level !== level) {
+      this.level = level;
+      this.notice = 'Level ' + level;
+      this.noticeOpacity = 1;
+    }
   }
 
   public moveLeft() {
