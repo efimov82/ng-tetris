@@ -26,7 +26,7 @@ export class NextShapeComponent implements OnInit, OnChanges {
 
   ngOnInit() {
     this.canvas.nativeElement.width = 120;
-    this.canvas.nativeElement.height = 380;
+    this.canvas.nativeElement.height = 240;
 
     this.ctx = this.canvas.nativeElement.getContext('2d');
   }
@@ -37,6 +37,7 @@ export class NextShapeComponent implements OnInit, OnChanges {
 
     const rects: Shape[] = [];
     let y = 0;
+
     nextItems.forEach((shape: Shape, index: number) => {
       if (this.ctx) {
         const smallShape = ShapeFactory.create(

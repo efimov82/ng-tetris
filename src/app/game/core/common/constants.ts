@@ -11,13 +11,13 @@ export const SHAPES_LIST: Map<number, Shapes> = new Map([
 ]);
 
 export const COLORS: Map<number, string> = new Map([
-  [0, 'red'],
+  [0, 'OrangeRed'],
   [1, 'green'],
-  [2, 'blue'],
+  [2, 'RoyalBlue'],
   [3, 'purple'],
-  [4, 'yellow'],
+  [4, 'SeaGreen'],
   [5, 'orange'],
-  [6, 'pink'],
-  [7, 'magenta'],
-  [8, 'cyan'],
+  [6, 'Maroon'],
+  [7, 'olive'],
+  [8, 'chocolate'],
 ]);

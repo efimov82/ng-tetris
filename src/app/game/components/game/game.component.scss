@@ -1,5 +1,10 @@
-.gameField {
+.fieldContainer {
+  padding: 6px;
   margin: 10px;
-  //background: rgb(31, 30, 30);
-  background-image: url("/assets/images/board.png");
+  background-color: #1f1e1c;
+  border-radius: 20px;
+  .gameField {
+    margin: 10px;
+    background-image: url("/assets/images/board.png");
+  }
 }

@@ -41,3 +41,28 @@ export const getLevelSpeed = (level: number): number => {
       return 300;
   }
 };
+
+export const getGradientColor = (color: string): string => {
+  switch (color) {
+    case 'OrangeRed':
+      return 'Orange';
+    case 'green':
+      return 'springgreen';
+    case 'RoyalBlue':
+      return 'SkyBlue';
+    case 'purple':
+      return 'plum';
+    case 'SeaGreen':
+      return 'Moccasin';
+    case 'orange':
+      return 'moccasin';
+    case 'Maroon':
+      return 'LightCoral';
+    case 'olive':
+      return 'PaleGoldenRod';
+    case 'chocolate':
+      return 'BlanchedAlmond';
+    default:
+      return 'white';
+  }
+};

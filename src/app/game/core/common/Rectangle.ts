@@ -1,4 +1,5 @@
 import { Position, Velocity } from './types';
+import { getGradientColor } from './utils';
 
 export class Rectangle {
   constructor(
@@ -54,6 +55,20 @@ export class Rectangle {
 
     if (full) {
       this.ctx.fillStyle = this.color;
+      this.ctx.fill();
+
+      const gradient = this.ctx.createRadialGradient(
+        x + 1,
+        y + 1,
+        2,
+        x + 5,
+        y + 5,
+        25
+      );
+
+      gradient.addColorStop(0, getGradientColor(this.color));
+      gradient.addColorStop(1, this.color);
+      this.ctx.fillStyle = gradient;
       this.ctx.fill();
     }
 
