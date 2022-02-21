@@ -22,3 +22,12 @@ export const COLORS: Map<number, Color<string>> = new Map([
   [8, { base: 'Chocolate', highlight: 'BlanchedAlmond' }],
   [9, { base: 'DeepPink', highlight: 'LightPink' }],
 ]);
+
+export enum SOUND {
+  gameStarted = 'levelUp.wav',
+  addShape = 'addToHeap.wav',
+  removeLine = 'removeLine.wav',
+  levelUp = 'levelUp.wav',
+  hardDrop = 'hardDrop.wav',
+  gameOver = 'gameOver.wav',
+}

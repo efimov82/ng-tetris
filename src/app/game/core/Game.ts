@@ -1,8 +1,11 @@
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { Queue } from './common/Queue';
 import { Shape } from './common/Shape.abstract';
 import { ShapeFactory } from './common/ShapeFactory';
+import { GameEvent } from './common/types';
 import { calculateScores, getLevelSpeed } from './common/utils';
+import { GameOverEvent, LevelUpEvent, RemoveLinesEvent } from './events';
+import { AddShapeEvent } from './events/AddShape.event';
 import { Heap } from './Heap';
 
 export enum GameState {
@@ -32,6 +35,7 @@ export class Game {
   private next: Shape | undefined = undefined;
   private heap: Heap | undefined;
   private queue: Queue<Shape> = new Queue(3);
+  // private event = new InitEvent();
 
   private level$ = new BehaviorSubject(this.level);
   private gameTime$ = new BehaviorSubject(this.gameTime);
@@ -39,6 +43,7 @@ export class Game {
   private scores$ = new BehaviorSubject<number>(this.scores);
   private state$ = new BehaviorSubject(this.state);
   private nextItems$ = new BehaviorSubject<Shape[]>(this.queue.getItems());
+  private events$ = new Subject<GameEvent<any>>();
 
   private animationFrame = 0;
   private lastUpdate: number = 0;
@@ -105,56 +110,6 @@ export class Game {
     }
 
     this.showNotice();
-  }
-
-  protected showNotice(): void {
-    if (this.notice) {
-      this.ctx.font = '48px serif';
-      this.ctx.fillStyle = 'grey';
-      this.ctx.globalAlpha = this.noticeOpacity;
-      this.ctx.fillText(
-        this.notice,
-        this.canvas.width / 4,
-        this.canvas.height / 3
-      );
-
-      this.ctx.globalAlpha = 1;
-      this.noticeOpacity -= 0.003;
-
-      if (this.noticeOpacity <= 0) {
-        this.notice = '';
-      }
-    }
-  }
-
-  protected addCurrentShapeToHeap() {
-    if (!this.current || !this.heap) return;
-
-    const res = this.heap.add(this.current);
-    const removedLines = this.heap.removeCompletedLines();
-    this.removedLines += removedLines;
-
-    if (this.heap.isTouchTop()) {
-      this.gameOver();
-      return;
-    }
-
-    this.current = this.queue.pop();
-
-    this.queue.push(this.generateNext());
-    this.nextItems$.next([...this.queue.getItems()].reverse());
-
-    this.scores += calculateScores(removedLines);
-    this.calculateLevel();
-  }
-
-  protected calculateLevel(): void {
-    const level = Math.floor(this.removedLines / 20) + 1;
-    if (this.level !== level) {
-      this.level = level;
-      this.notice = 'Level ' + level;
-      this.noticeOpacity = 1;
-    }
   }
 
   public moveLeft() {
@@ -227,6 +182,10 @@ export class Game {
     return this.nextItems$.asObservable();
   }
 
+  public getEvents(): Observable<GameEvent<any>> {
+    return this.events$.asObservable();
+  }
+
   protected setState(state: GameState) {
     this.state = state;
     this.state$.next(state);
@@ -264,6 +223,91 @@ export class Game {
     return res;
   }
 
+  protected showNotice(): void {
+    if (this.notice) {
+      this.ctx.font = '48px serif';
+      this.ctx.fillStyle = 'grey';
+      this.ctx.globalAlpha = this.noticeOpacity;
+      this.ctx.fillText(
+        this.notice,
+        this.canvas.width / 4,
+        this.canvas.height / 3
+      );
+
+      this.ctx.globalAlpha = 1;
+      this.noticeOpacity -= 0.003;
+
+      if (this.noticeOpacity <= 0) {
+        this.notice = '';
+      }
+    }
+  }
+
+  protected showGameOverNotice(text = 'Game Over!'): void {
+    this.ctx.font = '48px serif';
+    this.ctx.fillStyle = 'white'; // #000066
+    this.ctx.globalAlpha = 0.85;
+    const gradient = this.ctx.createRadialGradient(
+      this.canvas.width / 3,
+      this.canvas.height / 2,
+      0,
+      this.canvas.width / 2,
+      this.canvas.height / 2,
+      320
+    );
+
+    gradient.addColorStop(0, '#000066'); // #00004d
+    gradient.addColorStop(1, '#802b00');
+    this.ctx.fillStyle = gradient;
+    this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+
+    // #ff9999
+    this.ctx.fillStyle = 'OrangeRed'; //#ff4d4d
+    this.ctx.globalAlpha = 1;
+    this.ctx.fillText(text, 30, this.canvas.height / 2);
+  }
+
+  protected addCurrentShapeToHeap() {
+    if (!this.current || !this.heap) return;
+
+    const res = this.heap.add(this.current);
+    if (res) {
+      this.events$.next(new AddShapeEvent());
+    }
+    const removedLines = this.heap.removeCompletedLines();
+    this.removedLines += removedLines;
+
+    if (this.heap.isTouchTop()) {
+      this.gameOver();
+      this.events$.next(new GameOverEvent());
+      return;
+    }
+
+    // Rotate next shape
+    this.current = this.queue.pop();
+    this.queue.push(this.generateNext());
+    this.nextItems$.next([...this.queue.getItems()].reverse());
+    // Lines
+    if (removedLines) {
+      this.events$.next(new RemoveLinesEvent(removedLines));
+    }
+    // Scores
+    this.scores += calculateScores(removedLines);
+    // Level
+    this.calculateLevel();
+  }
+
+  protected calculateLevel(): void {
+    const level = Math.floor(this.removedLines / 20) + 1;
+    if (this.level !== level) {
+      this.level = level;
+      this.notice = 'Level ' + level;
+      this.noticeOpacity = 1;
+
+      this.events$.next(new LevelUpEvent(this.level));
+    }
+  }
+
   protected needMoveDown(): boolean {
     const updateInterval = getLevelSpeed(this.level) / this.downVelocity;
     const timestamp = Date.now();
@@ -289,8 +333,10 @@ export class Game {
 
   protected gameOver() {
     this.setState(GameState.finished);
+    // this.notice = 'Game Over';
     this.current?.draw();
     clearInterval(this.timer);
+    this.showGameOverNotice();
   }
 
   protected generateNext(): Shape {

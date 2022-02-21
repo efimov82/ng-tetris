@@ -112,12 +112,10 @@ export abstract class Shape {
   public getFuturePositionLeft(): Position[] {
     const res: Position[] = [];
     this.cells.forEach((rect) => {
-      const newPos: Position = {
-        x: rect.getPosition().x,
+      res.push({
+        x: rect.getPosition().x - this.cellSize,
         y: rect.getPosition().y,
-      };
-      newPos.x -= this.cellSize;
-      res.push(newPos);
+      });
     });
 
     return res;
@@ -126,12 +124,10 @@ export abstract class Shape {
   public getFuturePositionRight(): Position[] {
     const res: Position[] = [];
     this.cells.forEach((rect) => {
-      const newPos: Position = {
-        x: rect.getPosition().x,
+      res.push({
+        x: rect.getPosition().x + this.cellSize,
         y: rect.getPosition().y,
-      };
-      newPos.x += this.cellSize;
-      res.push(newPos);
+      });
     });
 
     return res;

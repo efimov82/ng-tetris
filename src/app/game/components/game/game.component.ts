@@ -4,18 +4,24 @@ import {
   ElementRef,
   HostListener,
   Inject,
+  OnDestroy,
   OnInit,
   ViewChild,
 } from '@angular/core';
+import { Subscription } from 'rxjs';
+import { SOUND } from '../../core/common/constants';
+import { GameEvent, GameEventType } from '../../core/common/types';
+import { GameOverEvent } from '../../core/events';
 import { Game } from '../../core/Game';
 import { GameService } from '../../services/game.service';
+import { SoundService } from '../../services/sound.service';
 
 @Component({
   selector: 'app-game',
   templateUrl: './game.component.html',
   styleUrls: ['./game.component.scss'],
 })
-export class GameComponent implements OnInit {
+export class GameComponent implements OnInit, OnDestroy {
   @ViewChild('canvas', { static: true })
   canvas!: ElementRef<HTMLCanvasElement>;
 
@@ -24,9 +30,11 @@ export class GameComponent implements OnInit {
   private fieldWidth = 300;
   private fieldHeight = 600;
   private cellSize = 30;
+  private eventSub: Subscription = new Subscription();
 
   constructor(
     private gameService: GameService,
+    private soundService: SoundService,
     @Inject(DOCUMENT) private readonly documentRef: Document
   ) {}
 
@@ -42,7 +50,11 @@ export class GameComponent implements OnInit {
       this.game.finish();
     }
     this.game = this.gameService.create(this.canvas, this.cellSize);
+    this.eventSub = this.game
+      .getEvents()
+      .subscribe(this.eventHandler.bind(this));
     this.game.start();
+    this.soundService.play(SOUND.gameStarted);
   }
 
   public pauseGame() {
@@ -80,5 +92,27 @@ export class GameComponent implements OnInit {
         this.game.hardDrop();
         break;
     }
+  }
+
+  protected eventHandler(event: GameEvent<any>): void {
+    switch (event.type) {
+      case GameEventType.addShape:
+        this.soundService.play(SOUND.addShape);
+        break;
+      case GameEventType.removeLines:
+        this.soundService.play(SOUND.removeLine);
+        break;
+      case GameEventType.levelUp:
+        this.soundService.play(SOUND.levelUp);
+        break;
+      case GameEventType.gameOver:
+        this.soundService.play(SOUND.gameOver);
+        break;
+    }
+  }
+
+  ngOnDestroy(): void {
+    this.game.finish();
+    this.eventSub.unsubscribe();
   }
 }

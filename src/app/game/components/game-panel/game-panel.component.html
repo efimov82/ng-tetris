@@ -5,7 +5,7 @@
     <button
       *ngIf="gameState$ && (gameState$ | async) !== GameState.started"
       type="button"
-      class="btn btn-primary mb-1"
+      class="btn btn-success mb-1"
       (click)="onStartClick()"
     >
       New game
@@ -14,7 +14,7 @@
     <button
       *ngIf="gameState$ && (gameState$ | async) === GameState.started"
       type="button"
-      class="btn btn-primary"
+      class="btn btn-warning"
       (click)="onPauseClick()"
     >
       Pause
@@ -23,7 +23,7 @@
     <button
       *ngIf="gameState$ && (gameState$ | async) === GameState.paused"
       type="button"
-      class="btn btn-primary"
+      class="btn btn-info"
       (click)="onResumeClick()"
     >
       Resume

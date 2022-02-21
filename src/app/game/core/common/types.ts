@@ -22,3 +22,18 @@ export interface Position {
   x: number;
   y: number;
 }
+
+export enum GameEventType {
+  addShape = 'addShape',
+  addScores = 'addScores',
+  gameOver = 'gameOver',
+  levelUp = 'levelUp',
+  removeLines = 'removedLines',
+}
+
+export interface GameEvent<T> {
+  type: GameEventType;
+  payload?: T;
+
+  getPayload(): T;
+}
