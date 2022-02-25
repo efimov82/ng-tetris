@@ -30,7 +30,7 @@ export class GameComponent implements OnInit, OnDestroy {
   private fieldWidth = 300;
   private fieldHeight = 600;
   private cellSize = 30;
-  private eventSub: Subscription = new Subscription();
+  private eventsSub: Subscription = new Subscription();
 
   constructor(
     private gameService: GameService,
@@ -47,12 +47,13 @@ export class GameComponent implements OnInit, OnDestroy {
 
   public newGame() {
     if (this.game) {
-      this.game.finish();
+      this.game.destroy();
     }
     this.game = this.gameService.create(this.canvas, this.cellSize);
-    this.eventSub = this.game
+    this.eventsSub = this.game
       .getEvents()
       .subscribe(this.eventHandler.bind(this));
+
     this.game.start();
     this.soundService.play(SOUND.gameStarted);
   }
@@ -112,7 +113,7 @@ export class GameComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.game.finish();
-    this.eventSub.unsubscribe();
+    this.game.destroy();
+    this.eventsSub.unsubscribe();
   }
 }

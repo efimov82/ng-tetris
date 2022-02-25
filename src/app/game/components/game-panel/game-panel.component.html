@@ -1,11 +1,9 @@
-<!-- <p *ngIf="gameState$">Game state: {{ gameState$ | async }}</p> -->
-
-<div class="container mt-3 mb-3">
+<div class="container mt-3 mb-3 wrapper">
   <div class="row">
     <button
       *ngIf="gameState$ && (gameState$ | async) !== GameState.started"
       type="button"
-      class="btn btn-success mb-1"
+      class="btn btn-success mb-1 customeButton"
       (click)="onStartClick()"
     >
       New game
@@ -14,7 +12,7 @@
     <button
       *ngIf="gameState$ && (gameState$ | async) === GameState.started"
       type="button"
-      class="btn btn-warning"
+      class="btn btn-warning customeButton"
       (click)="onPauseClick()"
     >
       Pause
@@ -23,7 +21,7 @@
     <button
       *ngIf="gameState$ && (gameState$ | async) === GameState.paused"
       type="button"
-      class="btn btn-info"
+      class="btn btn-info customeButton"
       (click)="onResumeClick()"
     >
       Resume

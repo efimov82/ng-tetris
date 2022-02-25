@@ -1,4 +1,5 @@
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
+import { GameOver } from './common/GameOver';
 import { Queue } from './common/Queue';
 import { Shape } from './common/Shape.abstract';
 import { ShapeFactory } from './common/ShapeFactory';
@@ -48,7 +49,7 @@ export class Game {
   private animationFrame = 0;
   private lastUpdate: number = 0;
   private downVelocity = 1;
-  private notice = `Let's go!`;
+  private notice = `Level 1`;
   private noticeOpacity = 1;
 
   constructor(private canvas: HTMLCanvasElement, private cellSize: number) {
@@ -144,7 +145,7 @@ export class Game {
     }
   }
 
-  public finish() {
+  public destroy() {
     cancelAnimationFrame(this.animationFrame);
   }
 
@@ -225,8 +226,8 @@ export class Game {
 
   protected showNotice(): void {
     if (this.notice) {
-      this.ctx.font = '48px serif';
-      this.ctx.fillStyle = 'grey';
+      this.ctx.font = '32px PixelRegular';
+      this.ctx.fillStyle = 'Chartreuse';
       this.ctx.globalAlpha = this.noticeOpacity;
       this.ctx.fillText(
         this.notice,
@@ -243,30 +244,6 @@ export class Game {
     }
   }
 
-  protected showGameOverNotice(text = 'Game Over!'): void {
-    this.ctx.font = '48px serif';
-    this.ctx.fillStyle = 'white'; // #000066
-    this.ctx.globalAlpha = 0.85;
-    const gradient = this.ctx.createRadialGradient(
-      this.canvas.width / 3,
-      this.canvas.height / 2,
-      0,
-      this.canvas.width / 2,
-      this.canvas.height / 2,
-      320
-    );
-
-    gradient.addColorStop(0, '#000066'); // #00004d
-    gradient.addColorStop(1, '#802b00');
-    this.ctx.fillStyle = gradient;
-    this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
-
-    // #ff9999
-    this.ctx.fillStyle = 'OrangeRed'; //#ff4d4d
-    this.ctx.globalAlpha = 1;
-    this.ctx.fillText(text, 30, this.canvas.height / 2);
-  }
-
   protected addCurrentShapeToHeap() {
     if (!this.current || !this.heap) return;
 
@@ -274,8 +251,8 @@ export class Game {
     if (res) {
       this.events$.next(new AddShapeEvent());
     }
-    const removedLines = this.heap.removeCompletedLines();
-    this.removedLines += removedLines;
+
+    this.removeLines();
 
     if (this.heap.isTouchTop()) {
       this.gameOver();
@@ -287,14 +264,20 @@ export class Game {
     this.current = this.queue.pop();
     this.queue.push(this.generateNext());
     this.nextItems$.next([...this.queue.getItems()].reverse());
-    // Lines
+
+    this.calculateLevel();
+  }
+
+  protected removeLines(): void {
+    if (!this.heap) return;
+
+    const removedLines = this.heap.removeCompletedLines();
+    this.removedLines += removedLines;
+
     if (removedLines) {
       this.events$.next(new RemoveLinesEvent(removedLines));
+      this.scores += calculateScores(removedLines);
     }
-    // Scores
-    this.scores += calculateScores(removedLines);
-    // Level
-    this.calculateLevel();
   }
 
   protected calculateLevel(): void {
@@ -332,11 +315,14 @@ export class Game {
   }
 
   protected gameOver() {
+    this.notice = '';
     this.setState(GameState.finished);
-    // this.notice = 'Game Over';
+
     this.current?.draw();
     clearInterval(this.timer);
-    this.showGameOverNotice();
+
+    const component = new GameOver();
+    component.draw(this.canvas);
   }
 
   protected generateNext(): Shape {

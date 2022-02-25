@@ -26,7 +26,7 @@ export const COLORS: Map<number, Color<string>> = new Map([
 export enum SOUND {
   gameStarted = 'levelUp.wav',
   addShape = 'addToHeap.wav',
-  removeLine = 'removeLine.wav',
+  removeLine = 'removeLine2.wav',
   levelUp = 'levelUp.wav',
   hardDrop = 'hardDrop.wav',
   gameOver = 'gameOver.wav',
