@@ -40,7 +40,7 @@ export class NextShapeComponent implements OnInit, OnChanges {
 
     nextItems.forEach((shape: Shape, index: number) => {
       if (this.ctx) {
-        const shapeName = shape.constructor.name;
+        const shapeName = shape.getName();
         const x = this.getPositionX(shapeName);
         const smallShape = ShapeFactory.create(
           shapeName,

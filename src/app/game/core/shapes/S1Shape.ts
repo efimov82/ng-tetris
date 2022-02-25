@@ -1,7 +1,7 @@
 import { Shape } from '../common/Shape.abstract';
 
 export class S1Shape extends Shape {
-  protected name = 'S1';
+  protected name = 'S1Shape';
 
   public getWidth(): number {
     if (this.isVertical) {

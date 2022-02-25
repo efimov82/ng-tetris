@@ -1,7 +1,7 @@
 import { Shape } from '../common/Shape.abstract';
 
 export class L2Shape extends Shape {
-  protected name = 'L2';
+  protected name = 'L2Shape';
 
   public getWidth(): number {
     if (this.orintation === 0 || this.orintation === 2) {
